@@ -7,7 +7,7 @@ public class Vaga {
     private String TipoVaga;
     private boolean StatusVaga;
     
-    public vaga(int id, String identificador, String TipoVaga, boolean StatusVaga) {
+    public Vaga(int id, String identificador, String TipoVaga, boolean StatusVaga) {
         this.id = id;
         this.identificador = identificador;
         this.TipoVaga = TipoVaga;
