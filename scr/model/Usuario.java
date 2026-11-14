@@ -6,13 +6,16 @@ public class Usuario {
     private String email;
     private String cpf;
     private String senhaHash;
+    private int id;
 
     //Construtor da classe Usuario
-    public Usuario (String nome, String email, String cpf, String senhaHash) {
+    public Usuario (String nome, String email, String cpf, String senhaHash, int id) {
+
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
         this.senhaHash = senhaHash;
+        this.id = id;
 
         //GET
     }
@@ -28,6 +31,9 @@ public class Usuario {
     public String getSenhaHash(){
         return senhaHash;
     }
+    public int getId(){
+        return id;
+    }
     //SET
     public void setNome( String nome){
         this.nome = nome;
@@ -41,6 +47,11 @@ public class Usuario {
     public void setSenhaHash(String senhaHash){
         this.senhaHash = senhaHash;
     }
+    public void setId(int id){
+        this.id = id;
+    }
+    
+
     //Método para exibir os dados do usuário
     public void exibirDados(){
           System.out.println("Nome:" + nome);
