@@ -1,15 +1,20 @@
-package model;
+package model;// Define o pacote onde a classe está armazenada
 
 public class Usuario {
-     private String nome;
+//Encapsulamento: protegidos contra acesso direto externo
+    private String nome;
     private String email;
     private String cpf;
     private String senhaHash;
+
+    //Construtor da classe Usuario
     public Usuario (String nome, String email, String cpf, String senhaHash) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
         this.senhaHash = senhaHash;
+
+        //GET
     }
     public String getNome(){
         return nome;
@@ -23,6 +28,7 @@ public class Usuario {
     public String getSenhaHash(){
         return senhaHash;
     }
+    //SET
     public void setNome( String nome){
         this.nome = nome;
     }
@@ -35,6 +41,7 @@ public class Usuario {
     public void setSenhaHash(String senhaHash){
         this.senhaHash = senhaHash;
     }
+    //Método para exibir os dados do usuário
     public void exibirDados(){
           System.out.println("Nome:" + nome);
           System.out.println("Email:" + email);
