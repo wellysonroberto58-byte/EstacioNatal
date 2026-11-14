@@ -1,6 +1,6 @@
 package model;
 
-public class estacionamento {
+public class Estacionamento {
 
 
     
