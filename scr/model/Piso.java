@@ -1,8 +1,8 @@
 package model;
-import java.util.List;
+import java.util.List; // Importa a biblioteca para manipulação de listas
 public class Piso {
     private String identificador;
-    private List<Setor> setores;
+    private List<Setor> setores; // Armazena uma lista contendo vários setores que pertencem a este piso
     public Piso(String identificador){
         this.identificador = identificador;
     }
@@ -20,3 +20,4 @@ public class Piso {
     }
 
 }
+//nao sei o que deu errado
