@@ -1,6 +1,6 @@
 package model;
 
-public class vaga {
+public class Vaga {
      
     private int id;
     private String identificador;
@@ -21,4 +21,5 @@ public class vaga {
     public int getId() {
         return id;
     }
+
 }
