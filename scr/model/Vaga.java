@@ -45,7 +45,10 @@ public class Vaga {
         this.status = status;
     }
 
-    public boolean isDisponivel() {
+
+    //Marcio
+    //Como se tratam de métodos que alterar os próprios atributos e/ou compartamentos, é interessante que fique aqui
+    public boolean isDisponivel() { 
         return status == StatusVaga.DISPONIVEL;
     }
 
