@@ -1,5 +1,7 @@
 package service;
 
+import java.util.List;
+
 import model.StatusVaga;
 import model.Vaga;
 import repository.IVaga;
@@ -84,5 +86,10 @@ public class VagaService {
 
         repository.editarVaga(id, vagaAlvo);
     }
+
+    public List<Vaga> listarVagas() {
+        return repository.listarVagas();
+    }
     
+
 }
