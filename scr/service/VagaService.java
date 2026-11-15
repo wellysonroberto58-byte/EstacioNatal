@@ -84,7 +84,7 @@ public class VagaService {
             throw new IllegalArgumentException("O tipo da vaga não pode estar vazio");
         }
 
-        repository.editarVaga(id, vagaAlvo);
+        repository.editarVaga(id, vaga);
     }
 
     public List<Vaga> listarVagas() {

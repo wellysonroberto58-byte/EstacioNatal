@@ -1,26 +1,22 @@
-import server.Api;
-import server.UsuarioTeste;
-import server.UsuarioTesteRepository;
+import controller.VagaController;
+import repository.IVaga;
+import repository.IVagaMemory;
+import server.Servidor;
+import service.VagaService;
+
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        IVaga repository = new IVagaMemory();
 
+        VagaService service = new VagaService(repository);
 
-        UsuarioTesteRepository usuarioMetodos = new UsuarioTesteRepository();
+        VagaController controller = new VagaController(service);
 
-        UsuarioTeste usuario = new UsuarioTeste("Márcio", 14, 1);
-        UsuarioTeste usuario2 = new UsuarioTeste("Leoncio", 64, 2);
-        UsuarioTeste usuario3 = new UsuarioTeste("Clarice", 28, 3);
+        Servidor servidor = new Servidor(controller);
 
-
-        usuarioMetodos.cadastrarUsuario(usuario);
-        usuarioMetodos.cadastrarUsuario(usuario2);
-        usuarioMetodos.cadastrarUsuario(usuario3);
-
-        Api serverApi = new Api(usuarioMetodos);
-
-        serverApi.iniciar();
-
+        servidor.iniciar();
+        
     }
 }
