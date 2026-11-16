@@ -50,22 +50,42 @@
             />
           </div>
 
-          <div class="field">
-            <label for="cpf">CPF</label>
-            <input
-              id="cpf"
-              name="cpf"
-              type="text"
-              inputmode="numeric"
-              autocomplete="off"
-              placeholder="000.000.000-00"
-              pattern="[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}"
-              title="Informe o CPF no formato 000.000.000-00"
-              maxlength="14"
-              aria-describedby="cpf-hint"
-              required
-            />
-            <small id="cpf-hint">Digite os números com pontos e traço.</small>
+          <div class="field-agrupada">
+            <div class="field">
+              <label for="placa">Placa</label>
+              <input
+                id="placa"
+                name="placa"
+                type="text"
+                inputmode="text"
+                autocomplete="off"
+                placeholder="NEU-6723"
+                pattern="[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}"
+                title="Informe a placa do automóvel"
+                maxlength="14"
+                aria-describedby="placa-hint"
+                required
+              />
+              <small id="cpf-hint">Digite a placa com traço.</small>
+            </div>
+
+            <div class="field">
+              <label for="cpf">CPF</label>
+              <input
+                id="cpf"
+                name="cpf"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                placeholder="000.000.000-00"
+                pattern="[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}"
+                title="Informe o CPF no formato 000.000.000-00"
+                maxlength="14"
+                aria-describedby="cpf-hint"
+                required
+              />
+              <small id="cpf-hint">Digite os números com pontos e traço.</small>
+            </div>
           </div>
 
           <div class="field">
