@@ -18,4 +18,6 @@ public class Motorista extends Usuario {
    public void setIdPlaca(String idPlaca) {
     this.placa = idPlaca;
    }
+
+
 }

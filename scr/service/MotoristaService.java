@@ -12,6 +12,22 @@ public class MotoristaService {
     public MotoristaService (IMotorista repository){
         this.repository = repository;
     }
+
+    public Motorista autenticar(String email, String senha){
+      
+        Motorista motorista = repository.buscarPorEmail(email);
+
+        if (motorista == null){
+            return null;
+        }
+
+        if (!motorista.getSenhaHash().equals(senha)){
+            return null;
+        }
+
+        return motorista;
+
+   }
     
     public void cadastrarMotorista(Motorista motorista){
         

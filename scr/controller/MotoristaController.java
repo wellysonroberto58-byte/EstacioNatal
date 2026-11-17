@@ -37,6 +37,10 @@ public class MotoristaController {
         return service.listaMotoristas();
     }
 
+    public Motorista autenticar(String email, String senha) {
+        return service.autenticar(email, senha);
+    }
+
 
 
     //CONFIGURANDO ROTAS
@@ -44,6 +48,24 @@ public class MotoristaController {
     Gson gson = new Gson();
 
     public void registrarRotas(HttpServer servidor){
+
+        servidor.createContext("/estacioNatal/login/motorista", exchange -> {
+            String metodo = exchange.getRequestMethod();
+
+            if (metodo.equals("POST")){
+                String conteudo = lerCorpo(exchange);
+
+                Motorista loginMotorista = gson.fromJson(conteudo, Motorista.class);
+
+                Motorista motorista = autenticar(loginMotorista.getEmail(), loginMotorista.getSenhaHash());
+
+                if (motorista != null){
+                    enviarResposta(exchange, 200, "Login realizado com sucesso!");
+                } else {
+                    enviarResposta(exchange, 401, "Email ou senha incorretos");
+                }
+            }
+        });
 
         servidor.createContext("/estacioNatal/motoristas", exchange -> {
             String metodo = exchange.getRequestMethod();
