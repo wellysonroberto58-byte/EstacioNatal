@@ -11,5 +11,7 @@ public interface IUsuario {
     List<Usuario> listarTodas();
 
     Usuario buscarPorId(int id);
+
+    Usuario buscarPorEmail(String email);
     
 }

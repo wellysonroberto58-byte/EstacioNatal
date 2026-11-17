@@ -5,19 +5,21 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpServer;
 
+import controller.UsuarioController;
 import controller.VagaController;
 
 public class Servidor {
 
     private HttpServer servidor;
 
-    public Servidor(VagaController vagaController) throws IOException {
+    public Servidor(VagaController vagaController, UsuarioController usuarioController) throws IOException {
 
         servidor = HttpServer.create(
             new InetSocketAddress(8080), 0
         );
 
         vagaController.registrarRotas(servidor);
+        usuarioController.registrarRotas(servidor);
 
         System.out.println("--------------------------------");
         System.out.println("       ESTACIONATAL API");

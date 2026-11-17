@@ -8,6 +8,7 @@ import model.Vaga;
 public class IVagaMemory implements IVaga{
 
     List<Vaga> vagas = new ArrayList<>();
+    int proximoId = 1;
 
     @Override
     public List<Vaga> listarVagas(){
@@ -16,7 +17,9 @@ public class IVagaMemory implements IVaga{
 
     @Override
     public void adicionarVaga(Vaga vaga){
+        vaga.setId(proximoId);
         vagas.add(vaga);
+        proximoId++;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package model;
 
+
 public class Camera {
     private int id;
     public String identificador;

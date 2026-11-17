@@ -8,10 +8,13 @@ import model.Camera;
 public class ICameraMemory implements ICamera{
 
     List<Camera> cameras = new ArrayList<>();
+    int proximoId = 1;
 
     @Override
     public void adicionarCamera(Camera camera){
+        camera.setId(proximoId);
         cameras.add(camera);
+        proximoId++;
     }
 
     @Override 

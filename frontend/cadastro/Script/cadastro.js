@@ -70,7 +70,7 @@ formulario.addEventListener("submit", (evento) => {
     senha: senha,
   };
 
-  fetch("http://localhost:8080/api/usuarios", {
+  fetch("http://localhost:8080/estacioNatal/usuarios", {
     method: "POST",
 
     headers: {
