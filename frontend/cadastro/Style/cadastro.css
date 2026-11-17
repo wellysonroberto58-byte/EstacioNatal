@@ -130,6 +130,20 @@ h1 {
   font-weight: 650;
 }
 
+.mensagem-sucesso {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  background-color: #dcfce7;
+  color: #166534;
+
+  padding: 15px 20px;
+  border-radius: 8px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .field-agrupada {
   display: flex;
   gap: 50px;
