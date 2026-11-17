@@ -50,6 +50,28 @@ public class MotoristaController {
 
             String caminho = exchange.getRequestURI().getPath();
 
+            // Configuração CORS
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Origin", "*"
+            );
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS"
+            );
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Headers",
+                "Content-Type"
+            );
+
+
+            if (metodo.equals("OPTIONS")) {
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
+
             if (metodo.equals("GET")){
                 List<Motorista> motoristas = service.listaMotoristas();
                 enviarResposta(exchange, 200, gson.toJson(motoristas));

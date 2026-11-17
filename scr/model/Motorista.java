@@ -1,10 +1,10 @@
 package model;
 import java.util.List;
 public class Motorista extends Usuario {
-    private String idPlaca;
- public Motorista(String nome , String email, String cpf, String senhaHash, String idPlaca, int id){
+    private String placa;
+ public Motorista(String nome , String email, String cpf, String senhaHash, String placa, int id){
     super(nome, email, cpf, senhaHash, id);
-    this.idPlaca = idPlaca;
+    this.placa = placa;
  } 
     public List<Vaga> exibirVgas(){
         return null;
@@ -13,9 +13,9 @@ public class Motorista extends Usuario {
     return null;
    }
    public String getIdPlaca() {
-    return idPlaca;
+    return placa;
    }        
    public void setIdPlaca(String idPlaca) {
-    this.idPlaca = idPlaca;
+    this.placa = idPlaca;
    }
 }
