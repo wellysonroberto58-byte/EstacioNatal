@@ -1,11 +1,11 @@
-import controller.UsuarioController;
+import controller.MotoristaController;
 import controller.VagaController;
-import repository.IUsuario;
-import repository.IUsuarioMemory;
+import repository.IMotorista;
+import repository.IMotoristaMemory;
 import repository.IVaga;
 import repository.IVagaMemory;
 import server.Servidor;
-import service.UsuarioService;
+import service.MotoristaService;
 import service.VagaService;
 
 
@@ -18,12 +18,12 @@ public class Main {
         VagaService vagaService = new VagaService(repoVaga);
         VagaController vagaController = new VagaController(vagaService);
 
-        //USUARIOS
-        IUsuario repoUsuario = new IUsuarioMemory();
-        UsuarioService usuarioService = new UsuarioService(repoUsuario);
-        UsuarioController usuarioController = new UsuarioController(usuarioService);
+        //MOTORISTAS
+        IMotorista repoMotorista = new IMotoristaMemory();
+        MotoristaService motoristaService = new MotoristaService(repoMotorista);
+        MotoristaController motoristaController = new MotoristaController(motoristaService);
 
-        Servidor servidor = new Servidor(vagaController, usuarioController);
+        Servidor servidor = new Servidor(vagaController, motoristaController);
 
         servidor.iniciar();
         

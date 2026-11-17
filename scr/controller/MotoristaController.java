@@ -10,31 +10,31 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
-import model.Usuario;
-import service.UsuarioService;
+import model.Motorista;
+import service.MotoristaService;
 
-public class UsuarioController {
+public class MotoristaController {
 
-    private UsuarioService service;
+    private MotoristaService service;
 
-    public UsuarioController (UsuarioService service){
+    public MotoristaController (MotoristaService service){
         this.service = service;
     }
 
-    public void cadastrarUsuario(Usuario usuario){
-        service.cadastrarUsuario(usuario);
+    public void cadastrarMotorista(Motorista motorista){
+        service.cadastrarMotorista(motorista);
     }
 
-    public Usuario buscarPorEmail(String email){
+    public Motorista buscarPorEmail(String email){
         return service.buscarPorEmail(email);
     }
 
-    public Usuario buscarPorId(int id){
+    public Motorista buscarPorId(int id){
         return service.buscarPorId(id);
     }
 
-    public List<Usuario> listarUsuarios(){
-        return service.listaUsuarios();
+    public List<Motorista> listarMotoristas(){
+        return service.listaMotoristas();
     }
 
 
@@ -45,23 +45,23 @@ public class UsuarioController {
 
     public void registrarRotas(HttpServer servidor){
 
-        servidor.createContext("/estacioNatal/usuarios", exchange -> {
+        servidor.createContext("/estacioNatal/motoristas", exchange -> {
             String metodo = exchange.getRequestMethod();
 
             String caminho = exchange.getRequestURI().getPath();
 
             if (metodo.equals("GET")){
-                List<Usuario> usuarios = service.listaUsuarios();
-                enviarResposta(exchange, 200, gson.toJson(usuarios));
+                List<Motorista> motoristas = service.listaMotoristas();
+                enviarResposta(exchange, 200, gson.toJson(motoristas));
             } 
             else if(metodo.equals ("POST")){
                 String conteudo = lerCorpo(exchange);
 
-                Usuario usuario = gson.fromJson(conteudo, Usuario.class);
+                Motorista motorista = gson.fromJson(conteudo, Motorista.class);
 
-                cadastrarUsuario(usuario);
+                cadastrarMotorista(motorista);
 
-                enviarResposta(exchange, 201, "VAGA CADASTRADA COM SUCESSO!");
+                enviarResposta(exchange, 201, "Motorista cadastrado com sucesso!");
 
             }
         });

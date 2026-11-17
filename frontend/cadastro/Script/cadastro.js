@@ -34,14 +34,6 @@ form.addEventListener("input", () => {
   }
 });
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  formMessage.dataset.state = "warning";
-  formMessage.textContent =
-    "Dados validados. A integração com o serviço de cadastro ainda não está configurada.";
-  formMessage.hidden = false;
-});
-
 form.addEventListener("reset", () => {
   confirmPassword.setCustomValidity("");
   delete formMessage.dataset.state;
@@ -53,7 +45,7 @@ form.addEventListener("reset", () => {
 const formulario = document.querySelector(".signup-form");
 
 formulario.addEventListener("submit", (evento) => {
-  evento.preventDefault;
+  evento.preventDefault();
 
   const nome = document.querySelector("#name").value;
   const email = document.querySelector("#email").value;
@@ -62,42 +54,46 @@ formulario.addEventListener("submit", (evento) => {
 
   const senha = document.querySelector("#password").value;
 
-  const novoUsuario = {
+  const novoMotorista = {
     nome: nome,
     email: email,
-    placa: placa,
     cpf: cpf,
-    senha: senha,
+    senhaHash: senha,
+    placa: placa,
   };
 
-  fetch("http://localhost:8080/estacioNatal/usuarios", {
+  fetch("http://localhost:8080/estacioNatal/motoristas", {
     method: "POST",
 
     headers: {
       "Content-Type": "application/json",
     },
 
-    body: JSON.stringify(novoUsuario),
+    body: JSON.stringify(novoMotorista),
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Não foi possível cadastrar a vaga");
+        throw new Error("Não foi possível cadastrar o motorista");
       }
 
-      return response.json();
+      return response.text();
     })
     .then((dados) => {
-      console.log("USUÀRIO CADASTRADO COM SUCESSO!");
+      console.log("MOTORISTA CADASTRADO COM SUCESSO!");
 
       const mensagem = document.createElement("div");
 
       mensagem.textContent = "Cadastro realizado com sucesso!";
 
-      mensagem.classList.add("mensagem-sucesso!");
+      mensagem.classList.add("mensagem-sucesso");
+
+      document.body.appendChild(mensagem);
 
       setTimeout(() => {
         mensagem.remove();
       }, 3000);
+
+      formulario.reset();
     })
     .catch((erro) => {
       console.error("Erro ao cadastrar:", erro);

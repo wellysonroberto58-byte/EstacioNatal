@@ -5,27 +5,28 @@ import java.net.InetSocketAddress;
 
 import com.sun.net.httpserver.HttpServer;
 
-import controller.UsuarioController;
+import controller.MotoristaController;
 import controller.VagaController;
 
 public class Servidor {
 
     private HttpServer servidor;
 
-    public Servidor(VagaController vagaController, UsuarioController usuarioController) throws IOException {
+    public Servidor(VagaController vagaController, MotoristaController motoristaController) throws IOException {
 
         servidor = HttpServer.create(
             new InetSocketAddress(8080), 0
         );
 
         vagaController.registrarRotas(servidor);
-        usuarioController.registrarRotas(servidor);
+        motoristaController.registrarRotas(servidor);
 
         System.out.println("--------------------------------");
         System.out.println("       ESTACIONATAL API");
         System.out.println("--------------------------------");
         System.out.println("Servidor: http://localhost:8080");
         System.out.println("Vagas:    http://localhost:8080/estacioNatal/vagas");
+        System.out.println("Motoristas: http://localhost:8080/estacioNatal/motoristas");
         System.out.println("--------------------------------");
     }
 
