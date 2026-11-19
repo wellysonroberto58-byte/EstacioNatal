@@ -50,6 +50,21 @@ public class MotoristaController {
     public void registrarRotas(HttpServer servidor){
 
         servidor.createContext("/estacioNatal/login/motorista", exchange -> {
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Origin", "*"
+            );
+
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, OPTIONS");
+
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
+
+            if (exchange.getRequestMethod().equals("OPTIONS")){
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
+
             String metodo = exchange.getRequestMethod();
 
             if (metodo.equals("POST")){
