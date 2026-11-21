@@ -413,6 +413,16 @@ a:focus-visible {
   outline: none;
 }
 
+.route-error {
+  padding: 18px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 9px;
+  background: rgba(255, 56, 56, 0.08);
+  color: #ffd2cc;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .welcome-layout {
   position: relative;
   display: grid;

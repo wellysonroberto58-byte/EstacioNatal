@@ -10,47 +10,36 @@ function requireElement(selector) {
   return element;
 }
 
-function requireElements(selector) {
-  const elements = document.querySelectorAll(selector);
-
-  if (elements.length === 0) {
-    throw new Error(`Nenhum elemento obrigatório encontrado: ${selector}`);
-  }
-
-  return elements;
-}
-
 const elements = {
   app: requireElement(".admin-app"),
-  navigationButtons: requireElements("[data-view]"),
-  homeContent: requireElement("[data-home-content]"),
-  homeOnlyContent: requireElements("[data-home-only]"),
-  sectionContent: requireElement("[data-section-content]"),
-  sectionKicker: requireElement("[data-section-kicker]"),
-  sectionTitle: requireElement("[data-section-title]"),
-  sectionDescription: requireElement("[data-section-description]"),
+  viewContent: requireElement("#view-content"),
+  navigationButtons: document.querySelectorAll("[data-view]"),
 };
 
 const sectionDetails = {
+  [HOME_VIEW]: {
+    file: "visao-geral.html",
+  },
   estrutura: {
-    kicker: "CONFIGURAÇÃO",
+    file: "estrutura.html",
     title: "Configurar estrutura",
-    description:
-      "Aqui você poderá organizar os pisos, setores e vagas do estacionamento.",
   },
   cameras: {
+    file: "placeholder.html",
     kicker: "MONITORAMENTO",
     title: "Câmeras",
     description:
       "Aqui você poderá acompanhar e gerenciar as câmeras do estacionamento.",
   },
   historico: {
+    file: "placeholder.html",
     kicker: "ATIVIDADES",
     title: "Histórico",
     description:
       "Aqui você poderá consultar o histórico de atividades do estacionamento.",
   },
   usuarios: {
+    file: "placeholder.html",
     kicker: "ACESSOS",
     title: "Gerenciamento de usuários",
     description:
@@ -58,36 +47,16 @@ const sectionDetails = {
   },
 };
 
+const routeViews = new Map();
+const pendingViews = new Map();
+let routeRequestId = 0;
+
 function getViewFromHash() {
   return window.location.hash.slice(1) || HOME_VIEW;
 }
 
 function isKnownView(viewName) {
-  return (
-    viewName === HOME_VIEW ||
-    Object.prototype.hasOwnProperty.call(sectionDetails, viewName)
-  );
-}
-
-function renderView(viewName) {
-  const isHome = viewName === HOME_VIEW;
-  const details = sectionDetails[viewName];
-
-  elements.navigationButtons.forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.dataset.view === viewName));
-  });
-
-  elements.homeContent.hidden = !isHome;
-  elements.homeOnlyContent.forEach((element) => {
-    element.hidden = !isHome;
-  });
-  elements.sectionContent.hidden = isHome;
-
-  if (!isHome) {
-    elements.sectionKicker.textContent = details.kicker;
-    elements.sectionTitle.textContent = details.title;
-    elements.sectionDescription.textContent = details.description;
-  }
+  return Object.prototype.hasOwnProperty.call(sectionDetails, viewName);
 }
 
 function resetToHome() {
@@ -96,21 +65,117 @@ function resetToHome() {
     "",
     `${window.location.pathname}${window.location.search}#${HOME_VIEW}`,
   );
-
-  // replaceState não dispara hashchange, então a rota corrigida é renderizada aqui.
-  renderView(HOME_VIEW);
 }
 
-function handleRoute() {
-  const currentHash = window.location.hash;
-  const viewName = getViewFromHash();
+function renderNavigation(viewName) {
+  elements.navigationButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.view === viewName));
+  });
+}
 
-  if (!currentHash || !isKnownView(viewName)) {
-    resetToHome();
+function setPlaceholderDetails(view, viewName) {
+  if (viewName === HOME_VIEW || viewName === "estrutura") {
     return;
   }
 
-  renderView(viewName);
+  const details = sectionDetails[viewName];
+  view.querySelector("[data-section-kicker]").textContent = details.kicker;
+  view.querySelector("[data-section-title]").textContent = details.title;
+  view.querySelector("[data-section-description]").textContent =
+    details.description;
+}
+
+async function loadView(viewName) {
+  if (routeViews.has(viewName)) {
+    return routeViews.get(viewName);
+  }
+
+  if (pendingViews.has(viewName)) {
+    return pendingViews.get(viewName);
+  }
+
+  const loadPromise = (async () => {
+    if (window.location.protocol === "file:") {
+      throw new Error(
+        "Para carregar telas HTML separadas sem recarregar a SPA, abra o projeto por um servidor HTTP.",
+      );
+    }
+
+    const response = await fetch(`views/${sectionDetails[viewName].file}`);
+    if (!response.ok) {
+      throw new Error(
+        `Não foi possível carregar a tela (${response.status} ${response.statusText}).`,
+      );
+    }
+
+    const markup = await response.text();
+    const parsedDocument = new DOMParser().parseFromString(markup, "text/html");
+    const view = document.createElement("div");
+    view.className = "route-view";
+    view.dataset.route = viewName;
+    view.hidden = true;
+
+    Array.from(parsedDocument.body.childNodes).forEach((node) => {
+      view.append(document.importNode(node, true));
+    });
+
+    setPlaceholderDetails(view, viewName);
+
+    if (viewName === "estrutura") {
+      const { mountStructurePage } = await import("./estrutura.js");
+      mountStructurePage(view);
+    }
+
+    routeViews.set(viewName, view);
+    return view;
+  })();
+
+  pendingViews.set(viewName, loadPromise);
+
+  try {
+    return await loadPromise;
+  } finally {
+    pendingViews.delete(viewName);
+  }
+}
+
+function showRouteError(error) {
+  elements.viewContent.replaceChildren();
+  const message = document.createElement("p");
+  message.className = "route-error";
+  message.setAttribute("role", "alert");
+  message.textContent = `Não foi possível abrir esta tela: ${error.message}`;
+  elements.viewContent.append(message);
+}
+
+async function handleRoute() {
+  let viewName = getViewFromHash();
+
+  if (!isKnownView(viewName)) {
+    resetToHome();
+    viewName = HOME_VIEW;
+  } else if (!window.location.hash) {
+    resetToHome();
+  }
+
+  const requestId = ++routeRequestId;
+  renderNavigation(viewName);
+
+  try {
+    const activeView = await loadView(viewName);
+    if (requestId !== routeRequestId) {
+      return;
+    }
+
+    routeViews.forEach((view) => {
+      view.hidden = view !== activeView;
+    });
+    elements.viewContent.replaceChildren(...routeViews.values());
+  } catch (error) {
+    if (requestId === routeRequestId) {
+      showRouteError(error);
+    }
+  }
 }
 
 function handleNavigationClick(event) {
@@ -119,14 +184,12 @@ function handleNavigationClick(event) {
   }
 
   const routeButton = event.target.closest("[data-view], [data-open-view]");
-
   if (!routeButton || !elements.app.contains(routeButton)) {
     return;
   }
 
   const viewName = routeButton.dataset.view || routeButton.dataset.openView;
-
-  if (viewName) {
+  if (viewName && isKnownView(viewName)) {
     window.location.hash = viewName;
   }
 }

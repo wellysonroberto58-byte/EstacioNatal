@@ -1,0 +1,243 @@
+<section class="structure-workspace" data-structure-content>
+<div class="structure-page-heading">
+  <div>
+    <p class="eyebrow">CONFIGURAÇÃO DO LOCAL</p>
+    <h2>Estrutura do estacionamento<span>.</span></h2>
+    <p>
+      Cadastre os dados do local e organize os pisos, setores e
+      vagas.
+    </p>
+  </div>
+  <div class="saved-state" id="saved-state" data-state="draft">
+    <span class="saved-state-dot" aria-hidden="true"></span>
+    <span id="saved-state-label">Alterações não salvas</span>
+  </div>
+</div>
+
+<div class="structure-notice" id="structure-message" role="status" aria-live="polite" hidden></div>
+
+<form class="structure-form" id="structure-form">
+  <section class="editor-card" aria-labelledby="general-title">
+    <div class="editor-card-heading">
+      <span class="step-number">01</span>
+      <div>
+        <p class="eyebrow">INFORMAÇÕES GERAIS</p>
+        <h3 id="general-title">Sobre o estacionamento</h3>
+      </div>
+    </div>
+
+    <div class="general-fields">
+      <div class="admin-field field-wide">
+        <label for="structure-name">Nome da estrutura</label>
+        <input
+          id="structure-name"
+          name="structure-name"
+          type="text"
+          placeholder="Ex.: Estacionamento Estácio Natal"
+          autocomplete="organization"
+          maxlength="100"
+          required
+        />
+      </div>
+      <div class="admin-field field-wide">
+        <label for="structure-address">Endereço</label>
+        <input
+          id="structure-address"
+          name="structure-address"
+          type="text"
+          placeholder="Rua, número, bairro, cidade - UF"
+          autocomplete="street-address"
+          maxlength="180"
+          required
+        />
+      </div>
+      <div class="admin-field floor-count-field">
+        <label for="floor-count">Quantidade de pisos</label>
+        <div class="number-input-wrap">
+          <input
+            id="floor-count"
+            name="floor-count"
+            type="number"
+            min="1"
+            max="20"
+            step="1"
+            value="1"
+            required
+          />
+          <span>pisos</span>
+        </div>
+        <small>Você pode configurar até 20 pisos.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="editor-card floors-card" aria-labelledby="floors-title">
+    <div class="editor-card-heading">
+      <span class="step-number">02</span>
+      <div>
+        <p class="eyebrow">PISOS E SETORES</p>
+        <h3 id="floors-title">Organize cada andar</h3>
+      </div>
+      <span class="section-counter" id="floor-counter">1 piso</span>
+    </div>
+
+    <div class="floor-tabs" id="floor-tabs" role="group" aria-label="Selecionar piso"></div>
+
+    <div class="floor-editor" id="floor-editor">
+      <div class="admin-field floor-name-field">
+        <label for="floor-name">Nome deste piso</label>
+        <input
+          id="floor-name"
+          name="floor-name"
+          type="text"
+          placeholder="Ex.: Térreo, G1 ou Subsolo 1"
+          maxlength="60"
+          required
+        />
+      </div>
+
+      <div class="sector-builder">
+        <div class="sector-builder-heading">
+          <div>
+            <h4>Adicionar setor</h4>
+            <p>Identifique o setor e informe quantas vagas ele terá.</p>
+          </div>
+          <span class="sector-builder-index" aria-hidden="true">A</span>
+        </div>
+        <div class="sector-fields">
+          <div class="admin-field sector-id-field">
+            <label for="sector-id">Identificador do setor</label>
+            <input
+              id="sector-id"
+              name="sector-id"
+              type="text"
+              placeholder="Ex.: I"
+              maxlength="6"
+              pattern="[A-Za-z0-9]{1,6}"
+              title="Use de 1 a 6 letras ou números, sem espaços."
+              aria-describedby="sector-id-hint"
+            />
+            <small id="sector-id-hint">As vagas serão numeradas, por exemplo, I01, I02...</small>
+          </div>
+          <div class="admin-field spot-count-field">
+            <label for="sector-spot-count">Quantidade de vagas</label>
+            <input
+              id="sector-spot-count"
+              name="sector-spot-count"
+              type="number"
+              min="1"
+              max="999"
+              step="1"
+              value="12"
+            />
+          </div>
+          <button class="button button-add-sector" id="add-sector-button" type="button">
+            <span aria-hidden="true">+</span>
+            Adicionar setor
+          </button>
+        </div>
+      </div>
+
+      <div class="sectors-list" id="sectors-list">
+        <div class="empty-sectors">
+          <span class="empty-sectors-icon" aria-hidden="true">+</span>
+          <span>
+            <strong>Nenhum setor neste piso</strong>
+            <small>Adicione o primeiro setor para começar a distribuir as vagas.</small>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="button button-secondary" id="cancel-structure" type="button">
+        Cancelar
+      </button>
+      <button class="button button-primary" type="submit">
+        <span>Salvar estrutura</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="m5 12 4 4L19 6" />
+        </svg>
+      </button>
+    </div>
+  </section>
+</form>
+
+<section class="map-preview-card" aria-labelledby="map-preview-title">
+  <div class="map-preview-heading">
+    <div class="map-preview-title">
+      <span class="map-preview-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z" />
+          <path d="M9 4v13.5M15 6.5V20" />
+        </svg>
+      </span>
+      <div>
+        <p class="eyebrow">VISUALIZAÇÃO</p>
+        <h3 id="map-preview-title">Mapa de vagas</h3>
+      </div>
+    </div>
+    <button class="button button-map" id="toggle-map-button" type="button" hidden>
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z" />
+        <path d="M9 4v13.5M15 6.5V20" />
+      </svg>
+      <span>Exibir mapa de vagas</span>
+    </button>
+  </div>
+
+  <div class="map-empty" id="map-empty">
+    <span class="map-empty-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 6.5 9 4l6 2.5L21 4v13.5L15 20l-6-2.5L3 20V6.5Z" />
+        <path d="M9 4v13.5M15 6.5V20" />
+      </svg>
+    </span>
+    <div>
+      <strong>Seu mapa começa com a estrutura</strong>
+      <p>Preencha os dados e salve para visualizar os pisos, setores e vagas.</p>
+    </div>
+  </div>
+
+  <div class="parking-map-view" id="parking-map-view" hidden>
+    <div class="parking-map-toolbar">
+      <div class="map-floor-row">
+        <label class="map-floor-select">
+          <span>Piso</span>
+          <select id="map-floor-select" aria-label="Selecionar piso do mapa"></select>
+        </label>
+        <span class="map-info-pill">
+          <span class="map-info-dot" aria-hidden="true"></span>
+          Prévia da estrutura salva
+        </span>
+      </div>
+      <div class="map-sector-picker">
+        <span class="map-sector-label">Setor</span>
+        <div class="map-sector-tabs" id="map-sector-tabs" role="group" aria-label="Selecionar setor do mapa"></div>
+      </div>
+    </div>
+
+    <div class="parking-map-board">
+      <div class="parking-map-entry">
+        <span class="entry-arrow" aria-hidden="true">↓</span>
+        <span>ACESSO AO ESTACIONAMENTO</span>
+        <span class="entry-arrow" aria-hidden="true">↓</span>
+      </div>
+      <div class="parking-map-content">
+        <div class="parking-map-caption">
+          <div>
+            <span class="map-caption-kicker" id="map-floor-caption"></span>
+            <h4 id="map-sector-caption"></h4>
+          </div>
+          <span class="map-spot-total" id="map-spot-total"></span>
+        </div>
+        <div class="parking-spots-grid" id="parking-spots-grid" aria-label="Vagas do setor"></div>
+      </div>
+      <div class="parking-map-exit">
+        <span>VIA DE CIRCULAÇÃO</span>
+        <span aria-hidden="true">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
+</section>
