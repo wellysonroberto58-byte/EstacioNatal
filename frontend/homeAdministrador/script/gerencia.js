@@ -1,11 +1,35 @@
-const navigationButtons = Array.from(document.querySelectorAll("[data-view]"));
-const quickAccessButtons = document.querySelectorAll("[data-open-view]");
-const homeContent = document.querySelector("[data-home-content]");
-const homeOnlyContent = document.querySelectorAll("[data-home-only]");
-const sectionContent = document.querySelector("[data-section-content]");
-const sectionKicker = document.querySelector("[data-section-kicker]");
-const sectionTitle = document.querySelector("[data-section-title]");
-const sectionDescription = document.querySelector("[data-section-description]");
+const HOME_VIEW = "visao-geral";
+
+function requireElement(selector) {
+  const element = document.querySelector(selector);
+
+  if (!element) {
+    throw new Error(`Elemento obrigatório não encontrado: ${selector}`);
+  }
+
+  return element;
+}
+
+function requireElements(selector) {
+  const elements = document.querySelectorAll(selector);
+
+  if (elements.length === 0) {
+    throw new Error(`Nenhum elemento obrigatório encontrado: ${selector}`);
+  }
+
+  return elements;
+}
+
+const elements = {
+  app: requireElement(".admin-app"),
+  navigationButtons: requireElements("[data-view]"),
+  homeContent: requireElement("[data-home-content]"),
+  homeOnlyContent: requireElements("[data-home-only]"),
+  sectionContent: requireElement("[data-section-content]"),
+  sectionKicker: requireElement("[data-section-kicker]"),
+  sectionTitle: requireElement("[data-section-title]"),
+  sectionDescription: requireElement("[data-section-description]"),
+};
 
 const sectionDetails = {
   estrutura: {
@@ -34,89 +58,79 @@ const sectionDetails = {
   },
 };
 
+function getViewFromHash() {
+  return window.location.hash.slice(1) || HOME_VIEW;
+}
+
+function isKnownView(viewName) {
+  return (
+    viewName === HOME_VIEW ||
+    Object.prototype.hasOwnProperty.call(sectionDetails, viewName)
+  );
+}
+
 function renderView(viewName) {
-  const isHome = viewName === "visao-geral";
+  const isHome = viewName === HOME_VIEW;
   const details = sectionDetails[viewName];
 
-  if (!isHome && !details) {
-    return false;
-  }
-
-  navigationButtons.forEach((button) => {
-    button.setAttribute(
-      "aria-pressed",
-      String(button.dataset.view === viewName),
-    );
+  elements.navigationButtons.forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.view === viewName));
   });
 
-  homeContent.hidden = !isHome;
-  homeOnlyContent.forEach((element) => {
+  elements.homeContent.hidden = !isHome;
+  elements.homeOnlyContent.forEach((element) => {
     element.hidden = !isHome;
   });
-  sectionContent.hidden = isHome;
+  elements.sectionContent.hidden = isHome;
 
   if (!isHome) {
-    sectionKicker.textContent = details.kicker;
-    sectionTitle.textContent = details.title;
-    sectionDescription.textContent = details.description;
+    elements.sectionKicker.textContent = details.kicker;
+    elements.sectionTitle.textContent = details.title;
+    elements.sectionDescription.textContent = details.description;
   }
-
-  return true;
 }
 
-function navigateToView(viewName) {
-  const nextHash = `#${viewName}`;
-
-  if (!renderView(viewName)) {
-    return;
-  }
-
-  if (window.location.hash === nextHash) {
-    return;
-  }
-
-  window.location.hash = viewName;
-}
-
-navigationButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    navigateToView(button.dataset.view);
-  });
-});
-
-quickAccessButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    navigateToView(button.dataset.openView);
-  });
-});
-
-window.addEventListener("hashchange", () => {
-  const viewName = window.location.hash.slice(1) || "visao-geral";
-
-  if (!renderView(viewName)) {
-    window.history.replaceState(
-      null,
-      "",
-      `${window.location.pathname}${window.location.search}#visao-geral`,
-    );
-    renderView("visao-geral");
-  }
-});
-
-const initialView = window.location.hash.slice(1) || "visao-geral";
-if (renderView(initialView)) {
-  if (!window.location.hash) {
-    window.history.replaceState(
-      null,
-      "",
-      `${window.location.pathname}${window.location.search}#visao-geral`,
-    );
-  }
-} else {
+function resetToHome() {
   window.history.replaceState(
     null,
     "",
-    `${window.location.pathname}${window.location.search}#visao-geral`,
+    `${window.location.pathname}${window.location.search}#${HOME_VIEW}`,
   );
-  renderView("visao-geral");
+
+  // replaceState não dispara hashchange, então a rota corrigida é renderizada aqui.
+  renderView(HOME_VIEW);
 }
+
+function handleRoute() {
+  const currentHash = window.location.hash;
+  const viewName = getViewFromHash();
+
+  if (!currentHash || !isKnownView(viewName)) {
+    resetToHome();
+    return;
+  }
+
+  renderView(viewName);
+}
+
+function handleNavigationClick(event) {
+  if (!(event.target instanceof Element)) {
+    return;
+  }
+
+  const routeButton = event.target.closest("[data-view], [data-open-view]");
+
+  if (!routeButton || !elements.app.contains(routeButton)) {
+    return;
+  }
+
+  const viewName = routeButton.dataset.view || routeButton.dataset.openView;
+
+  if (viewName) {
+    window.location.hash = viewName;
+  }
+}
+
+elements.app.addEventListener("click", handleNavigationClick);
+window.addEventListener("hashchange", handleRoute);
+handleRoute();
