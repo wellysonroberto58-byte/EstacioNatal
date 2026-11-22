@@ -15,7 +15,11 @@
   <body>
     <div class="admin-app">
       <header class="topbar">
-        <a class="brand" href="gerencia.html" aria-label="Estácio Natal — visão geral">
+        <a
+          class="brand"
+          href="gerencia.html"
+          aria-label="Estácio Natal — visão geral"
+        >
           <span class="brand-mark" aria-hidden="true">E</span>
           <span>Estácio<span class="brand-accent">Natal</span></span>
         </a>
@@ -23,7 +27,11 @@
           <p class="topbar-eyebrow">PAINEL ADMINISTRATIVO</p>
           <h1>Gerenciamento de estacionamento</h1>
         </div>
-        <button class="profile-button" type="button" aria-label="Perfil do administrador">
+        <button
+          class="profile-button"
+          type="button"
+          aria-label="Perfil do administrador"
+        >
           <span class="profile-avatar" aria-hidden="true">AD</span>
           <span class="profile-copy">
             <strong>Administrador</strong>
@@ -63,14 +71,18 @@
           </a>
           <a class="nav-button" href="estrutura.html" aria-current="page">
             <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-4h4v4" />
+              <path
+                d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-4h4v4"
+              />
             </svg>
             <span>Configurar estrutura</span>
             <span class="nav-indicator" aria-hidden="true"></span>
           </a>
           <a class="nav-button" href="cameras.html">
             <svg aria-hidden="true" viewBox="0 0 24 24">
-              <path d="M14 10 20 7v10l-6-3M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+              <path
+                d="M14 10 20 7v10l-6-3M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"
+              />
               <circle cx="8" cy="12" r="2" />
             </svg>
             <span>Câmeras</span>
@@ -87,7 +99,9 @@
           <a class="nav-button" href="usuarios.html">
             <svg aria-hidden="true" viewBox="0 0 24 24">
               <circle cx="9" cy="8" r="3" />
-              <path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.2a3 3 0 0 1 0 5.6m2 3.2a5 5 0 0 1 3 4.6V20" />
+              <path
+                d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.2a3 3 0 0 1 0 5.6m2 3.2a5 5 0 0 1 3 4.6V20"
+              />
             </svg>
             <span>Gerenciamento de usuários</span>
             <span class="nav-indicator" aria-hidden="true"></span>
@@ -118,7 +132,10 @@
               <div>
                 <p class="eyebrow">CONFIGURAÇÃO DO LOCAL</p>
                 <h2>Estrutura do estacionamento<span>.</span></h2>
-                <p>Cadastre os dados do local e organize os pisos, setores e vagas.</p>
+                <p>
+                  Cadastre os dados do local e organize os pisos, setores e
+                  vagas.
+                </p>
               </div>
               <div class="saved-state">
                 <span class="saved-state-dot" aria-hidden="true"></span>
@@ -134,6 +151,8 @@
               hidden
             ></div>
 
+            <!-- Formulario da estrutura -->
+
             <form class="structure-form" id="structure-form">
               <section class="editor-card" aria-labelledby="general-title">
                 <div class="editor-card-heading">
@@ -143,7 +162,9 @@
                     <h3 id="general-title">Sobre o estacionamento</h3>
                   </div>
                 </div>
+                <!-- Seção geral: Nome do estacionamento e Endereço -->
                 <div class="general-fields">
+                  <!-- Campo de nome com ID #structure-name -->
                   <div class="admin-field field-wide">
                     <label for="structure-name">Nome da estrutura</label>
                     <input
@@ -157,6 +178,7 @@
                     />
                   </div>
                   <div class="admin-field field-wide">
+                    <!-- Campo de Endereço com ID #structure-address -->
                     <label for="structure-address">Endereço</label>
                     <input
                       id="structure-address"
@@ -168,6 +190,7 @@
                       required
                     />
                   </div>
+                  <!-- Campo para gerar os pisos configuráveis -->
                   <div class="admin-field floor-count-field">
                     <label for="floor-count">Quantidade de pisos</label>
                     <div class="number-input-wrap">
@@ -188,16 +211,27 @@
                 </div>
               </section>
 
-              <section class="editor-card floors-card" aria-labelledby="floors-title">
+              <section
+                class="editor-card floors-card"
+                aria-labelledby="floors-title"
+              >
+                <!-- Seção de Pisos e Setores -->
                 <div class="editor-card-heading">
                   <span class="step-number">02</span>
                   <div>
                     <p class="eyebrow">PISOS E SETORES</p>
                     <h3 id="floors-title">Organize cada andar</h3>
                   </div>
+                  <!-- Piso selecionado -->
                   <span class="section-counter" id="floor-counter">1 piso</span>
                 </div>
-                <div class="floor-tabs" id="floor-tabs" role="group" aria-label="Selecionar piso"></div>
+                <div
+                  class="floor-tabs"
+                  id="floor-tabs"
+                  role="group"
+                  aria-label="Selecionar piso"
+                ></div>
+                <!-- Campo para inserir o nome do piso com ID #floor-name -->
                 <div class="floor-editor" id="floor-editor">
                   <div class="admin-field floor-name-field">
                     <label for="floor-name">Nome deste piso</label>
@@ -210,15 +244,22 @@
                       required
                     />
                   </div>
+
+                  <!-- Subseção para adicionar setores -->
                   <div class="sector-builder">
                     <div class="sector-builder-heading">
                       <div>
                         <h4>Adicionar setor</h4>
-                        <p>Identifique o setor e informe quantas vagas ele terá.</p>
+                        <p>
+                          Identifique o setor e informe quantas vagas ele terá.
+                        </p>
                       </div>
-                      <span class="sector-builder-index" aria-hidden="true">A</span>
+                      <span class="sector-builder-index" aria-hidden="true"
+                        >A</span
+                      >
                     </div>
                     <div class="sector-fields">
+                      <!-- Campo para inserir o identificador do setor com ID #sector-id -->
                       <div class="admin-field sector-id-field">
                         <label for="sector-id">Identificador do setor</label>
                         <input
@@ -235,8 +276,12 @@
                           As vagas serão numeradas, por exemplo, I01, I02...
                         </small>
                       </div>
+
+                      <!-- Campo para inserir a quantidade de vagas com id #sector-spot-count -->
                       <div class="admin-field spot-count-field">
-                        <label for="sector-spot-count">Quantidade de vagas</label>
+                        <label for="sector-spot-count"
+                          >Quantidade de vagas</label
+                        >
                         <input
                           id="sector-spot-count"
                           name="sector-spot-count"
@@ -257,20 +302,32 @@
                       </button>
                     </div>
                   </div>
+
+                  <!-- Seção de setores adicionados -->
+
                   <div class="sectors-list" id="sectors-list">
                     <div class="empty-sectors">
-                      <span class="empty-sectors-icon" aria-hidden="true">+</span>
+                      <span class="empty-sectors-icon" aria-hidden="true"
+                        >+</span
+                      >
                       <span>
                         <strong>Nenhum setor neste piso</strong>
                         <small>
-                          Adicione o primeiro setor para começar a distribuir as vagas.
+                          Adicione o primeiro setor para começar a distribuir as
+                          vagas.
                         </small>
                       </span>
                     </div>
                   </div>
                 </div>
+
+                <!-- Botões de salvar e cancelar o formulário -->
                 <div class="form-actions">
-                  <button class="button button-secondary" id="cancel-structure" type="button">
+                  <button
+                    class="button button-secondary"
+                    id="cancel-structure"
+                    type="button"
+                  >
                     Cancelar
                   </button>
                   <button class="button button-primary" type="submit">
@@ -282,12 +339,14 @@
                 </div>
               </section>
             </form>
-
           </section>
         </section>
 
         <footer class="main-footer">
-          <span>Estácio Natal <span aria-hidden="true">·</span> Painel administrativo</span>
+          <span
+            >Estácio Natal <span aria-hidden="true">·</span> Painel
+            administrativo</span
+          >
           <span>Ambiente demonstrativo</span>
         </footer>
       </main>
