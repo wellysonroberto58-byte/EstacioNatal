@@ -1,5 +1,7 @@
-export function mountStructurePage(root) {
-  function requireElement(root, selector) {
+// Prepara os controles locais da tela de configuração da estrutura.
+function mountStructurePage(root) {
+  // Localiza um elemento obrigatório ou informa claramente qual não foi encontrado.
+  function requireElement(selector) {
     const element = root.querySelector(selector);
     if (!element) {
       throw new Error(
@@ -10,129 +12,53 @@ export function mountStructurePage(root) {
   }
 
   const elements = {
-    structureContent: requireElement(root, "[data-structure-content]"),
-    structureForm: requireElement(root, "#structure-form"),
-    structureName: requireElement(root, "#structure-name"),
-    structureAddress: requireElement(root, "#structure-address"),
-    floorCount: requireElement(root, "#floor-count"),
-    floorTabs: requireElement(root, "#floor-tabs"),
-    floorName: requireElement(root, "#floor-name"),
-    sectorId: requireElement(root, "#sector-id"),
-    sectorSpotCount: requireElement(root, "#sector-spot-count"),
-    addSectorButton: requireElement(root, "#add-sector-button"),
-    sectorsList: requireElement(root, "#sectors-list"),
-    floorCounter: requireElement(root, "#floor-counter"),
-    cancelStructureButton: requireElement(root, "#cancel-structure"),
-    savedState: requireElement(root, "#saved-state"),
-    savedStateLabel: requireElement(root, "#saved-state-label"),
-    structureMessage: requireElement(root, "#structure-message"),
-    mapEmpty: requireElement(root, "#map-empty"),
-    toggleMapButton: requireElement(root, "#toggle-map-button"),
-    mapView: requireElement(root, "#parking-map-view"),
-    mapFloorSelect: requireElement(root, "#map-floor-select"),
-    mapSectorTabs: requireElement(root, "#map-sector-tabs"),
-    mapFloorCaption: requireElement(root, "#map-floor-caption"),
-    mapSectorCaption: requireElement(root, "#map-sector-caption"),
-    mapSpotTotal: requireElement(root, "#map-spot-total"),
-    parkingSpotsGrid: requireElement(root, "#parking-spots-grid"),
+    structureContent: requireElement("[data-structure-content]"),
+    structureForm: requireElement("#structure-form"),
+    structureName: requireElement("#structure-name"),
+    structureAddress: requireElement("#structure-address"),
+    floorCount: requireElement("#floor-count"),
+    floorTabs: requireElement("#floor-tabs"),
+    floorName: requireElement("#floor-name"),
+    sectorId: requireElement("#sector-id"),
+    sectorSpotCount: requireElement("#sector-spot-count"),
+    addSectorButton: requireElement("#add-sector-button"),
+    sectorsList: requireElement("#sectors-list"),
+    floorCounter: requireElement("#floor-counter"),
+    cancelStructureButton: requireElement("#cancel-structure"),
+    structureMessage: requireElement("#structure-message"),
   };
 
-  const STRUCTURE_STORAGE_KEY = "estacioNatal.admin.structure.v1";
   const MAX_FLOORS = 20;
   const MAX_SPOTS_PER_SECTOR = 999;
 
+  // Cria um piso com um nome inicial e sem setores.
   function createFloor(index) {
     return {
-      id: `floor-${index + 1}`,
       name: `Piso ${index + 1}`,
       sectors: [],
     };
   }
 
-  function createEmptyStructure(floorCount = 1) {
-    return {
-      name: "",
-      address: "",
-      floors: Array.from({ length: floorCount }, (_, index) =>
-        createFloor(index),
-      ),
-    };
-  }
-
-  let draftStructure = createEmptyStructure();
-  let savedStructure = null;
+  let floors = [createFloor(0)];
   let activeFloorIndex = 0;
-  let activeMapFloorIndex = 0;
-  let activeMapSectorId = "";
-  let mapIsOpen = false;
+  let structureName = "";
+  let structureAddress = "";
 
-  function cloneStructure(structure) {
-    return JSON.parse(JSON.stringify(structure));
-  }
-
-  function isValidStructure(value) {
-    return (
-      value &&
-      typeof value.name === "string" &&
-      typeof value.address === "string" &&
-      value.name.trim().length > 0 &&
-      value.address.trim().length > 0 &&
-      Array.isArray(value.floors) &&
-      value.floors.length > 0 &&
-      value.floors.length <= MAX_FLOORS &&
-      value.floors.every(
-        (floor) =>
-          floor &&
-          typeof floor.name === "string" &&
-          floor.name.trim().length > 0 &&
-          Array.isArray(floor.sectors) &&
-          floor.sectors.every(
-            (sector) =>
-              sector &&
-              typeof sector.id === "string" &&
-              Number.isInteger(sector.spotCount) &&
-              sector.spotCount > 0 &&
-              sector.spotCount <= MAX_SPOTS_PER_SECTOR,
-          ),
-      )
-    );
-  }
-
+  // Exibe uma mensagem de validação ou informa que o salvamento ainda não existe.
   function showStructureMessage(message, state = "error") {
     elements.structureMessage.textContent = message;
     elements.structureMessage.dataset.state = state;
     elements.structureMessage.hidden = false;
   }
 
+  // Oculta a mensagem atual quando o usuário volta a editar os campos.
   function clearStructureMessage() {
     elements.structureMessage.textContent = "";
     elements.structureMessage.hidden = true;
     delete elements.structureMessage.dataset.state;
   }
 
-  function loadSavedStructure() {
-    try {
-      const storedStructure = window.localStorage.getItem(STRUCTURE_STORAGE_KEY);
-
-      if (!storedStructure) {
-        return null;
-      }
-
-      const parsedStructure = JSON.parse(storedStructure);
-
-      if (!isValidStructure(parsedStructure)) {
-        throw new Error("Os dados salvos da estrutura estão em formato inválido.");
-      }
-
-      return parsedStructure;
-    } catch (error) {
-      showStructureMessage(
-        `Não foi possível carregar a estrutura salva: ${error.message}`,
-      );
-      return null;
-    }
-  }
-
+  // Cria um elemento HTML usando texto simples.
   function createTextElement(tagName, className, text) {
     const element = document.createElement(tagName);
     element.className = className;
@@ -140,43 +66,43 @@ export function mountStructurePage(root) {
     return element;
   }
 
+  // Retorna o piso selecionado no editor.
   function getActiveFloor() {
-    return draftStructure.floors[activeFloorIndex];
+    return floors[activeFloorIndex];
   }
 
+  // Atualiza as opções de pisos e o contador.
   function renderFloorTabs() {
     elements.floorTabs.replaceChildren();
 
-    draftStructure.floors.forEach((floor, index) => {
+    floors.forEach((floor, index) => {
       const button = document.createElement("button");
       button.className = "floor-tab";
       button.type = "button";
       button.dataset.floorIndex = String(index);
       button.setAttribute("aria-pressed", String(index === activeFloorIndex));
-
       button.append(
         createTextElement(
           "span",
           "floor-tab-number",
           String(index + 1).padStart(2, "0"),
         ),
-        createTextElement("span", "floor-tab-name", floor.name || `Piso ${index + 1}`),
         createTextElement(
           "span",
-          "floor-tab-count",
-          String(floor.sectors.length),
+          "floor-tab-name",
+          floor.name || `Piso ${index + 1}`,
         ),
+        createTextElement("span", "floor-tab-count", String(floor.sectors.length)),
       );
-
       elements.floorTabs.append(button);
     });
 
-    const floorCount = draftStructure.floors.length;
-    elements.floorCounter.textContent = `${floorCount} ${
-      floorCount === 1 ? "piso" : "pisos"
+    elements.floorCounter.textContent = `${floors.length} ${
+      floors.length === 1 ? "piso" : "pisos"
     }`;
   }
 
+  // Cria o cartão de um setor com identificador, quantidade e opção de remoção.
   function createSectorCard(sector, sectorIndex) {
     const card = document.createElement("article");
     card.className = "sector-card";
@@ -194,7 +120,6 @@ export function mountStructurePage(root) {
         `${sector.spotCount} ${sector.spotCount === 1 ? "vaga" : "vagas"}`,
       ),
     );
-
     content.append(title);
 
     const removeButton = document.createElement("button");
@@ -208,11 +133,12 @@ export function mountStructurePage(root) {
     return card;
   }
 
+  // Renderiza os setores cadastrados no piso ativo ou o estado vazio.
   function renderSectors() {
-    const floor = getActiveFloor();
+    const sectors = getActiveFloor().sectors;
     elements.sectorsList.replaceChildren();
 
-    if (floor.sectors.length === 0) {
+    if (sectors.length === 0) {
       const emptyState = document.createElement("div");
       emptyState.className = "empty-sectors";
       const icon = createTextElement("span", "empty-sectors-icon", "+");
@@ -231,138 +157,24 @@ export function mountStructurePage(root) {
       return;
     }
 
-    floor.sectors.forEach((sector, index) => {
+    sectors.forEach((sector, index) => {
       elements.sectorsList.append(createSectorCard(sector, index));
     });
   }
 
-  function renderStructureEditor() {
-    elements.structureName.value = draftStructure.name;
-    elements.structureAddress.value = draftStructure.address;
-    elements.floorCount.value = String(draftStructure.floors.length);
+  // Sincroniza os campos e redesenha os pisos e setores.
+  function renderEditor() {
+    elements.structureName.value = structureName;
+    elements.structureAddress.value = structureAddress;
+    elements.floorCount.value = String(floors.length);
     elements.floorName.value = getActiveFloor().name;
     renderFloorTabs();
     renderSectors();
-    updateSavedState();
   }
 
-  function updateSavedState() {
-    const isSaved =
-      savedStructure !== null &&
-      JSON.stringify(draftStructure) === JSON.stringify(savedStructure);
-
-    elements.savedState.dataset.state = isSaved ? "saved" : "draft";
-    elements.savedStateLabel.textContent = isSaved
-      ? "Salvo neste navegador"
-      : "Alterações não salvas";
-  }
-
-  function markStructureAsChanged() {
-    updateSavedState();
-    clearStructureMessage();
-  }
-
-  function renderMapFloorOptions() {
-    elements.mapFloorSelect.replaceChildren();
-
-    savedStructure.floors.forEach((floor, index) => {
-      const option = document.createElement("option");
-      option.value = String(index);
-      option.textContent = floor.name || `Piso ${index + 1}`;
-      elements.mapFloorSelect.append(option);
-    });
-
-    activeMapFloorIndex = Math.min(
-      activeMapFloorIndex,
-      savedStructure.floors.length - 1,
-    );
-    elements.mapFloorSelect.value = String(activeMapFloorIndex);
-  }
-
-  function renderMapSectorTabs() {
-    const floor = savedStructure.floors[activeMapFloorIndex];
-    elements.mapSectorTabs.replaceChildren();
-
-    if (floor.sectors.length === 0) {
-      activeMapSectorId = "";
-      return;
-    }
-
-    if (!floor.sectors.some((sector) => sector.id === activeMapSectorId)) {
-      activeMapSectorId = floor.sectors[0].id;
-    }
-
-    floor.sectors.forEach((sector) => {
-      const button = document.createElement("button");
-      button.className = "map-sector-button";
-      button.type = "button";
-      button.dataset.mapSector = sector.id;
-      button.setAttribute("aria-pressed", String(sector.id === activeMapSectorId));
-      button.textContent = sector.id;
-      elements.mapSectorTabs.append(button);
-    });
-  }
-
-  function renderMapSpots() {
-    const floor = savedStructure.floors[activeMapFloorIndex];
-    const sector = floor.sectors.find((item) => item.id === activeMapSectorId);
-    elements.parkingSpotsGrid.replaceChildren();
-    elements.mapFloorCaption.textContent = floor.name || `Piso ${activeMapFloorIndex + 1}`;
-
-    if (!sector) {
-      elements.mapSectorCaption.textContent = "Nenhum setor cadastrado";
-      elements.mapSpotTotal.textContent = "Adicione setores para visualizar as vagas";
-      elements.parkingSpotsGrid.setAttribute("aria-label", "Nenhuma vaga cadastrada");
-      return;
-    }
-
-    elements.mapSectorCaption.textContent = `Setor ${sector.id}`;
-    elements.mapSpotTotal.textContent = `${sector.spotCount} ${
-      sector.spotCount === 1 ? "vaga cadastrada" : "vagas cadastradas"
-    }`;
-    elements.parkingSpotsGrid.setAttribute(
-      "aria-label",
-      `${sector.spotCount} vagas do setor ${sector.id}`,
-    );
-
-    for (let index = 1; index <= sector.spotCount; index += 1) {
-      const spotCode = `${sector.id}${String(index).padStart(2, "0")}`;
-      const spot = document.createElement("div");
-      spot.className = "map-spot";
-      spot.setAttribute("aria-label", `Vaga ${spotCode}`);
-
-      const car = document.createElement("span");
-      car.className = "map-spot-car";
-      car.setAttribute("aria-hidden", "true");
-      spot.append(car, createTextElement("span", "", spotCode));
-      elements.parkingSpotsGrid.append(spot);
-    }
-  }
-
-  function renderSavedMap() {
-    if (!savedStructure) {
-      elements.toggleMapButton.hidden = true;
-      elements.mapView.hidden = true;
-      elements.mapEmpty.hidden = false;
-      return;
-    }
-
-    elements.toggleMapButton.hidden = false;
-    elements.mapEmpty.hidden = true;
-    elements.mapView.hidden = !mapIsOpen;
-    elements.toggleMapButton.querySelector("span").textContent = mapIsOpen
-      ? "Ocultar mapa"
-      : "Exibir mapa de vagas";
-
-    if (mapIsOpen) {
-      renderMapFloorOptions();
-      renderMapSectorTabs();
-      renderMapSpots();
-    }
-  }
-
+  // Seleciona o piso e atualiza os dados exibidos.
   function setActiveFloor(index) {
-    if (!Number.isInteger(index) || !draftStructure.floors[index]) {
+    if (!Number.isInteger(index) || !floors[index]) {
       return;
     }
 
@@ -373,47 +185,42 @@ export function mountStructurePage(root) {
     clearStructureMessage();
   }
 
-  function resizeDraftFloors() {
+  // Ajusta a quantidade de pisos e confirma antes de descartar setores.
+  function resizeFloors() {
     const nextCount = Number(elements.floorCount.value);
-    const previousCount = draftStructure.floors.length;
+    const previousCount = floors.length;
 
-    if (
-      !Number.isInteger(nextCount) ||
-      nextCount < 1 ||
-      nextCount > MAX_FLOORS
-    ) {
-      showStructureMessage(`Informe uma quantidade entre 1 e ${MAX_FLOORS} pisos.`);
+    if (!Number.isInteger(nextCount) || nextCount < 1 || nextCount > MAX_FLOORS) {
+      showStructureMessage(
+        `Informe uma quantidade entre 1 e ${MAX_FLOORS} pisos.`,
+      );
       elements.floorCount.value = String(previousCount);
       return;
     }
 
-    if (nextCount < previousCount) {
-      const removedFloors = draftStructure.floors.slice(nextCount);
-      const hasConfiguration = removedFloors.some(
-        (floor) => floor.sectors.length > 0,
-      );
-
-      if (
-        hasConfiguration &&
-        !window.confirm(
-          "Os pisos removidos e seus setores serão excluídos da edição atual. Deseja continuar?",
-        )
-      ) {
-        elements.floorCount.value = String(previousCount);
-        return;
-      }
+    const removedFloors = floors.slice(nextCount);
+    const hasConfiguration = removedFloors.some(
+      (floor) => floor.sectors.length > 0,
+    );
+    if (
+      nextCount < previousCount &&
+      hasConfiguration &&
+      !window.confirm("Os pisos removidos e seus setores serão descartados. Deseja continuar?")
+    ) {
+      elements.floorCount.value = String(previousCount);
+      return;
     }
 
-    while (draftStructure.floors.length < nextCount) {
-      draftStructure.floors.push(createFloor(draftStructure.floors.length));
+    while (floors.length < nextCount) {
+      floors.push(createFloor(floors.length));
     }
-
-    draftStructure.floors.length = nextCount;
+    floors.length = nextCount;
     activeFloorIndex = Math.min(activeFloorIndex, nextCount - 1);
-    renderStructureEditor();
-    markStructureAsChanged();
+    renderEditor();
+    clearStructureMessage();
   }
 
+  // Valida e adiciona o setor ao piso selecionado.
   function addSector() {
     const floor = getActiveFloor();
     const sectorId = elements.sectorId.value.trim().toUpperCase();
@@ -455,23 +262,40 @@ export function mountStructurePage(root) {
     elements.sectorSpotCount.value = "12";
     renderFloorTabs();
     renderSectors();
-    markStructureAsChanged();
+    clearStructureMessage();
   }
 
-  function saveStructure(event) {
-    event.preventDefault();
+  // Descarta as alterações da prévia e restaura um piso vazio.
+  function cancelChanges() {
+    floors = [createFloor(0)];
+    activeFloorIndex = 0;
+    structureName = "";
+    structureAddress = "";
+    elements.sectorId.value = "";
+    elements.sectorSpotCount.value = "12";
+    elements.floorName.setCustomValidity("");
+    elements.sectorId.setCustomValidity("");
+    elements.sectorSpotCount.setCustomValidity("");
+    renderEditor();
+    showStructureMessage("Alterações descartadas nesta prévia.", "info");
+  }
 
+  // Mantém a tela sem envio nem persistência e informa isso ao usuário.
+  function handleSubmit(event) {
+    event.preventDefault();
     elements.structureName.value = elements.structureName.value.trim();
     elements.structureAddress.value = elements.structureAddress.value.trim();
     elements.floorName.value = elements.floorName.value.trim();
+
+    structureName = elements.structureName.value;
+    structureAddress = elements.structureAddress.value;
+    getActiveFloor().name = elements.floorName.value;
 
     if (!elements.structureForm.reportValidity()) {
       return;
     }
 
-    const unnamedFloorIndex = draftStructure.floors.findIndex(
-      (floor) => !floor.name.trim(),
-    );
+    const unnamedFloorIndex = floors.findIndex((floor) => !floor.name.trim());
     if (unnamedFloorIndex !== -1) {
       setActiveFloor(unnamedFloorIndex);
       elements.floorName.setCustomValidity("Informe um nome para este piso.");
@@ -479,58 +303,14 @@ export function mountStructurePage(root) {
       return;
     }
 
-    elements.floorName.setCustomValidity("");
-    draftStructure.name = elements.structureName.value;
-    draftStructure.address = elements.structureAddress.value;
-    getActiveFloor().name = elements.floorName.value;
-
-    try {
-      window.localStorage.setItem(
-        STRUCTURE_STORAGE_KEY,
-        JSON.stringify(draftStructure),
-      );
-      savedStructure = cloneStructure(draftStructure);
-      mapIsOpen = false;
-      renderStructureEditor();
-      renderSavedMap();
-      showStructureMessage("Estrutura salva neste navegador.", "success");
-    } catch (error) {
-      showStructureMessage(
-        `Não foi possível salvar a estrutura neste navegador: ${error.message}`,
-      );
-    }
-  }
-
-  function cancelStructureChanges() {
-    if (savedStructure) {
-      draftStructure = cloneStructure(savedStructure);
-    } else {
-      draftStructure = createEmptyStructure();
-    }
-
-    activeFloorIndex = 0;
-    mapIsOpen = false;
-    renderStructureEditor();
-    renderSavedMap();
+    renderFloorTabs();
     showStructureMessage(
-      savedStructure
-        ? "Edição cancelada. Os dados salvos foram restaurados."
-        : "Edição cancelada. O formulário foi limpo.",
+      "Esta tela é apenas uma prévia; o salvamento ainda não está implementado.",
       "info",
     );
   }
 
-  function initializeStructureEditor() {
-    savedStructure = loadSavedStructure();
-
-    if (savedStructure) {
-      draftStructure = cloneStructure(savedStructure);
-    }
-
-    renderStructureEditor();
-    renderSavedMap();
-  }
-
+  // Trata cliques nos controles dinâmicos de pisos e setores.
   function handleStructureClick(event) {
     if (!(event.target instanceof Element)) {
       return;
@@ -545,64 +325,45 @@ export function mountStructurePage(root) {
     const removeButton = event.target.closest("[data-remove-sector]");
     if (removeButton && elements.sectorsList.contains(removeButton)) {
       const sectorIndex = Number(removeButton.dataset.removeSector);
-      const [removedSector] = getActiveFloor().sectors.splice(sectorIndex, 1);
+      getActiveFloor().sectors.splice(sectorIndex, 1);
       renderFloorTabs();
       renderSectors();
-      markStructureAsChanged();
-      showStructureMessage(`Setor ${removedSector.id} removido da edição.`, "info");
-      return;
-    }
-
-    const mapSectorButton = event.target.closest("[data-map-sector]");
-    if (mapSectorButton && elements.mapSectorTabs.contains(mapSectorButton)) {
-      activeMapSectorId = mapSectorButton.dataset.mapSector;
-      renderMapSectorTabs();
-      renderMapSpots();
+      clearStructureMessage();
     }
   }
 
-  elements.floorCount.addEventListener("change", resizeDraftFloors);
+  elements.floorCount.addEventListener("change", resizeFloors);
   elements.floorName.addEventListener("input", () => {
     elements.floorName.setCustomValidity("");
-    const floor = getActiveFloor();
-    floor.name = elements.floorName.value;
+    getActiveFloor().name = elements.floorName.value;
     const tabName = elements.floorTabs.querySelector(
       `[data-floor-index="${activeFloorIndex}"] .floor-tab-name`,
     );
     if (tabName) {
-      tabName.textContent = floor.name || `Piso ${activeFloorIndex + 1}`;
+      tabName.textContent =
+        elements.floorName.value || `Piso ${activeFloorIndex + 1}`;
     }
-    if (
-      savedStructure &&
-      savedStructure.floors[activeFloorIndex] &&
-      elements.mapFloorSelect.options[activeFloorIndex]
-    ) {
-      elements.mapFloorSelect.options[activeFloorIndex].textContent =
-        floor.name || `Piso ${activeFloorIndex + 1}`;
-    }
-    markStructureAsChanged();
+    clearStructureMessage();
   });
   elements.structureName.addEventListener("input", () => {
-    draftStructure.name = elements.structureName.value;
-    markStructureAsChanged();
+    structureName = elements.structureName.value;
+    clearStructureMessage();
   });
   elements.structureAddress.addEventListener("input", () => {
-    draftStructure.address = elements.structureAddress.value;
-    markStructureAsChanged();
+    structureAddress = elements.structureAddress.value;
+    clearStructureMessage();
+  });
+  elements.sectorId.addEventListener("input", () => {
+    elements.sectorId.setCustomValidity("");
+  });
+  elements.sectorSpotCount.addEventListener("input", () => {
+    elements.sectorSpotCount.setCustomValidity("");
   });
   elements.addSectorButton.addEventListener("click", addSector);
-  elements.structureForm.addEventListener("submit", saveStructure);
-  elements.cancelStructureButton.addEventListener("click", cancelStructureChanges);
+  elements.structureForm.addEventListener("submit", handleSubmit);
+  elements.cancelStructureButton.addEventListener("click", cancelChanges);
   elements.structureContent.addEventListener("click", handleStructureClick);
-  elements.mapFloorSelect.addEventListener("change", () => {
-    activeMapFloorIndex = Number(elements.mapFloorSelect.value);
-    activeMapSectorId = "";
-    renderMapSectorTabs();
-    renderMapSpots();
-  });
-  elements.toggleMapButton.addEventListener("click", () => {
-    mapIsOpen = !mapIsOpen;
-    renderSavedMap();
-  });
-    initializeStructureEditor();
+  renderEditor();
 }
+
+mountStructurePage(document);

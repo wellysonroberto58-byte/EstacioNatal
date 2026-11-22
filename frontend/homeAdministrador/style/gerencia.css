@@ -287,13 +287,13 @@ a:focus-visible {
   color: var(--text-primary);
 }
 
-.nav-button[aria-pressed="true"] {
+.nav-button[aria-current="page"] {
   border-color: rgba(255, 56, 56, 0.2);
   background: linear-gradient(90deg, rgba(255, 56, 56, 0.16), rgba(255, 56, 56, 0.055));
   color: var(--text-primary);
 }
 
-.nav-button[aria-pressed="true"]::before {
+.nav-button[aria-current="page"]::before {
   position: absolute;
   top: 9px;
   bottom: 9px;
@@ -328,7 +328,7 @@ a:focus-visible {
   background: transparent;
 }
 
-.nav-button[aria-pressed="true"] .nav-indicator {
+.nav-button[aria-current="page"] .nav-indicator {
   background: var(--red-text);
   box-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
 }
@@ -1029,7 +1029,7 @@ a:focus-visible {
     font-size: 10px;
   }
 
-  .nav-button[aria-pressed="true"]::before {
+  .nav-button[aria-current="page"]::before {
     top: auto;
     right: 10px;
     bottom: -1px;

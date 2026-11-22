@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Configure pisos, setores e vagas do estacionamento Estácio Natal."
+    />
+    <title>Configurar estrutura | Estácio Natal</title>
+    <link rel="stylesheet" href="style/gerencia.css" />
+    <link rel="stylesheet" href="style/estrutura.css" />
+    <script type="module" src="script/estrutura.js"></script>
+  </head>
+  <body>
+    <div class="admin-app">
+      <header class="topbar">
+        <a class="brand" href="gerencia.html" aria-label="Estácio Natal — visão geral">
+          <span class="brand-mark" aria-hidden="true">E</span>
+          <span>Estácio<span class="brand-accent">Natal</span></span>
+        </a>
+        <div class="topbar-title">
+          <p class="topbar-eyebrow">PAINEL ADMINISTRATIVO</p>
+          <h1>Gerenciamento de estacionamento</h1>
+        </div>
+        <button class="profile-button" type="button" aria-label="Perfil do administrador">
+          <span class="profile-avatar" aria-hidden="true">AD</span>
+          <span class="profile-copy">
+            <strong>Administrador</strong>
+            <span>Gestor do estacionamento</span>
+          </span>
+          <svg class="profile-chevron" aria-hidden="true" viewBox="0 0 20 20">
+            <path d="m5 7.5 5 5 5-5" />
+          </svg>
+        </button>
+      </header>
+
+      <aside class="sidebar">
+        <div class="sidebar-heading">
+          <span class="sidebar-heading-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 20V8l8-5 8 5v12" />
+              <path d="M9 20v-6h6v6M8 9h.01M16 9h.01" />
+            </svg>
+          </span>
+          <span>
+            <strong>Área administrativa</strong>
+            <small>Estacionamento</small>
+          </span>
+        </div>
+
+        <p class="sidebar-label">MENU PRINCIPAL</p>
+        <nav class="side-nav" aria-label="Menu de gerenciamento">
+          <a class="nav-button" href="gerencia.html">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="8" height="8" rx="1.5" />
+              <rect x="13" y="3" width="8" height="5" rx="1.5" />
+              <rect x="13" y="10" width="8" height="11" rx="1.5" />
+              <rect x="3" y="13" width="8" height="8" rx="1.5" />
+            </svg>
+            <span>Visão geral</span>
+            <span class="nav-indicator" aria-hidden="true"></span>
+          </a>
+          <a class="nav-button" href="estrutura.html" aria-current="page">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-4h4v4" />
+            </svg>
+            <span>Configurar estrutura</span>
+            <span class="nav-indicator" aria-hidden="true"></span>
+          </a>
+          <a class="nav-button" href="cameras.html">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M14 10 20 7v10l-6-3M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+              <circle cx="8" cy="12" r="2" />
+            </svg>
+            <span>Câmeras</span>
+            <span class="nav-indicator" aria-hidden="true"></span>
+          </a>
+          <a class="nav-button" href="historico.html">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8" />
+              <path d="M3 3v5h5m4-1v5l3 2" />
+            </svg>
+            <span>Histórico</span>
+            <span class="nav-indicator" aria-hidden="true"></span>
+          </a>
+          <a class="nav-button" href="usuarios.html">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <circle cx="9" cy="8" r="3" />
+              <path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.2a3 3 0 0 1 0 5.6m2 3.2a5 5 0 0 1 3 4.6V20" />
+            </svg>
+            <span>Gerenciamento de usuários</span>
+            <span class="nav-indicator" aria-hidden="true"></span>
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="sidebar-status">
+            <span class="status-pulse" aria-hidden="true"></span>
+            <span>
+              <strong>Painel pronto</strong>
+              <small>Ambiente demonstrativo</small>
+            </span>
+          </div>
+          <a class="back-link" href="../homeMotorista/motorista.html">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M15 18 9 12l6-6M9 12h12" />
+            </svg>
+            <span>Voltar à tela do motorista</span>
+          </a>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <section class="view-panel">
+          <section class="structure-workspace" data-structure-content>
+            <div class="structure-page-heading">
+              <div>
+                <p class="eyebrow">CONFIGURAÇÃO DO LOCAL</p>
+                <h2>Estrutura do estacionamento<span>.</span></h2>
+                <p>Cadastre os dados do local e organize os pisos, setores e vagas.</p>
+              </div>
+              <div class="saved-state">
+                <span class="saved-state-dot" aria-hidden="true"></span>
+                <span>Prévia visual · sem salvamento</span>
+              </div>
+            </div>
+
+            <div
+              class="structure-notice"
+              id="structure-message"
+              role="status"
+              aria-live="polite"
+              hidden
+            ></div>
+
+            <form class="structure-form" id="structure-form">
+              <section class="editor-card" aria-labelledby="general-title">
+                <div class="editor-card-heading">
+                  <span class="step-number">01</span>
+                  <div>
+                    <p class="eyebrow">INFORMAÇÕES GERAIS</p>
+                    <h3 id="general-title">Sobre o estacionamento</h3>
+                  </div>
+                </div>
+                <div class="general-fields">
+                  <div class="admin-field field-wide">
+                    <label for="structure-name">Nome da estrutura</label>
+                    <input
+                      id="structure-name"
+                      name="structure-name"
+                      type="text"
+                      placeholder="Ex.: Estacionamento Estácio Natal"
+                      autocomplete="organization"
+                      maxlength="100"
+                      required
+                    />
+                  </div>
+                  <div class="admin-field field-wide">
+                    <label for="structure-address">Endereço</label>
+                    <input
+                      id="structure-address"
+                      name="structure-address"
+                      type="text"
+                      placeholder="Rua, número, bairro, cidade - UF"
+                      autocomplete="street-address"
+                      maxlength="180"
+                      required
+                    />
+                  </div>
+                  <div class="admin-field floor-count-field">
+                    <label for="floor-count">Quantidade de pisos</label>
+                    <div class="number-input-wrap">
+                      <input
+                        id="floor-count"
+                        name="floor-count"
+                        type="number"
+                        min="1"
+                        max="20"
+                        step="1"
+                        value="1"
+                        required
+                      />
+                      <span>pisos</span>
+                    </div>
+                    <small>Você pode configurar até 20 pisos.</small>
+                  </div>
+                </div>
+              </section>
+
+              <section class="editor-card floors-card" aria-labelledby="floors-title">
+                <div class="editor-card-heading">
+                  <span class="step-number">02</span>
+                  <div>
+                    <p class="eyebrow">PISOS E SETORES</p>
+                    <h3 id="floors-title">Organize cada andar</h3>
+                  </div>
+                  <span class="section-counter" id="floor-counter">1 piso</span>
+                </div>
+                <div class="floor-tabs" id="floor-tabs" role="group" aria-label="Selecionar piso"></div>
+                <div class="floor-editor" id="floor-editor">
+                  <div class="admin-field floor-name-field">
+                    <label for="floor-name">Nome deste piso</label>
+                    <input
+                      id="floor-name"
+                      name="floor-name"
+                      type="text"
+                      placeholder="Ex.: Térreo, G1 ou Subsolo 1"
+                      maxlength="60"
+                      required
+                    />
+                  </div>
+                  <div class="sector-builder">
+                    <div class="sector-builder-heading">
+                      <div>
+                        <h4>Adicionar setor</h4>
+                        <p>Identifique o setor e informe quantas vagas ele terá.</p>
+                      </div>
+                      <span class="sector-builder-index" aria-hidden="true">A</span>
+                    </div>
+                    <div class="sector-fields">
+                      <div class="admin-field sector-id-field">
+                        <label for="sector-id">Identificador do setor</label>
+                        <input
+                          id="sector-id"
+                          name="sector-id"
+                          type="text"
+                          placeholder="Ex.: I"
+                          maxlength="6"
+                          pattern="[A-Za-z0-9]{1,6}"
+                          title="Use de 1 a 6 letras ou números, sem espaços."
+                          aria-describedby="sector-id-hint"
+                        />
+                        <small id="sector-id-hint">
+                          As vagas serão numeradas, por exemplo, I01, I02...
+                        </small>
+                      </div>
+                      <div class="admin-field spot-count-field">
+                        <label for="sector-spot-count">Quantidade de vagas</label>
+                        <input
+                          id="sector-spot-count"
+                          name="sector-spot-count"
+                          type="number"
+                          min="1"
+                          max="999"
+                          step="1"
+                          value="12"
+                        />
+                      </div>
+                      <button
+                        class="button button-add-sector"
+                        id="add-sector-button"
+                        type="button"
+                      >
+                        <span aria-hidden="true">+</span>
+                        Adicionar setor
+                      </button>
+                    </div>
+                  </div>
+                  <div class="sectors-list" id="sectors-list">
+                    <div class="empty-sectors">
+                      <span class="empty-sectors-icon" aria-hidden="true">+</span>
+                      <span>
+                        <strong>Nenhum setor neste piso</strong>
+                        <small>
+                          Adicione o primeiro setor para começar a distribuir as vagas.
+                        </small>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="button button-secondary" id="cancel-structure" type="button">
+                    Cancelar
+                  </button>
+                  <button class="button button-primary" type="submit">
+                    <span>Salvar estrutura</span>
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path d="m5 12 4 4L19 6" />
+                    </svg>
+                  </button>
+                </div>
+              </section>
+            </form>
+
+          </section>
+        </section>
+
+        <footer class="main-footer">
+          <span>Estácio Natal <span aria-hidden="true">·</span> Painel administrativo</span>
+          <span>Ambiente demonstrativo</span>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

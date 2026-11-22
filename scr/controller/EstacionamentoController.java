@@ -55,7 +55,6 @@ public class EstacionamentoController {
                 salvarEstacionamento(novoEtaEstacionamento);
 
                 enviarResposta(exchange, 200, "Estacionamento Cadastrado com sucesso!");
-
             }
         });
     }
