@@ -12,6 +12,9 @@ public class Vaga {
         this.tipo = tipo;
         this.status = StatusVaga.DISPONIVEL;
     }
+    public Vaga() {
+        
+    }
 
     public int getId() {
         return id;
