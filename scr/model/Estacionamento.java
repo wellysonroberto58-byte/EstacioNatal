@@ -4,10 +4,14 @@ public class Estacionamento {
     private String nome;
     private String endereco;
     private List<Piso> pisos;
+    private int id;
 
     public Estacionamento(String nome, String endereco){
         this.nome = nome;
         this.endereco = endereco;
+    }
+    public int getId(){
+        return id;
     }
 
     public String getNome() {
@@ -20,6 +24,11 @@ public class Estacionamento {
 
     public List<Piso> getPisos() {
         return pisos;
+    }
+
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public void setNome(String nome) {
