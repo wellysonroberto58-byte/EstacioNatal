@@ -10,6 +10,8 @@ public class Estacionamento {
         this.nome = nome;
         this.endereco = endereco;
     }
+    public Estacionamento (){}
+    
     public int getId(){
         return id;
     }

@@ -6,6 +6,8 @@ public class Piso {
     public Piso(String identificador){
         this.identificador = identificador;
     }
+    public Piso(){}
+    
     public String getIdentificador() {
         return identificador;
     }

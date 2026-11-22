@@ -9,6 +9,8 @@ public class Setor {
         this.identificador = identificador;
     }
 
+    public Setor(){}
+
 
     public String getIdentificador() {
         return identificador;

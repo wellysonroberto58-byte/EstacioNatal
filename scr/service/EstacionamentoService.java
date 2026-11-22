@@ -16,8 +16,9 @@ public class EstacionamentoService {
     private IEstacionamento repository;
     private IVaga vagaRepository;
 
-    public EstacionamentoService (IEstacionamento repository){
+    public EstacionamentoService (IEstacionamento repository, IVaga vagaRepository){
         this.repository = repository;
+        this.vagaRepository = vagaRepository;
     }
 
     private List<Vaga> gerarVagas(String setor, int quantidade){
@@ -43,10 +44,6 @@ public class EstacionamentoService {
             throw new IllegalArgumentException("Não foi possível salvar. Endereço já cadastrado");
         }
 
-        if(repository.procurarPorId(estacionamento.getId()) != null){
-            throw new IllegalArgumentException("Não foi possível salvar. Estacionamento já cadastrado");
-        }
-
         for (Piso piso : estacionamento.getPisos()) {
             for (Setor setor : piso.getSetores()){
 
@@ -56,6 +53,13 @@ public class EstacionamentoService {
                 );
                 for (Vaga vaga : vagasGeradas) {
                     vagaRepository.adicionarVaga(vaga);
+                }
+                System.out.println("Vagas geradas para o setor: " + setor.getIdentificador());
+
+                for (Vaga vaga : vagasGeradas) {
+                    System.out.println(
+                        vaga.getIdentificador() + " - " + vaga.getStatus()
+                    );
                 }
                 setor.setVagas(vagasGeradas);
             }

@@ -32,12 +32,12 @@ public class EstacionamentoController {
 
 
     public void registrarRotas(HttpServer server){
-        server.createContext("/estacioNatal/login/estacionamento", exchange -> {
-            exchange.getResponseHeaders().set("Access-Controll-Allow-Origin", "*");
+        server.createContext("/estacioNatal/estacionamentos", exchange -> {
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
 
-            exchange.getResponseHeaders().set("Access-Controll-Allow-Methods", "POST, OPTIONS");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, OPTIONS");
 
-            exchange.getResponseHeaders().set("Access-Controll-Allow-Headers", "Content-Type");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
 
             if (exchange.getRequestMethod().equals("OPTIONS")){
                 exchange.sendResponseHeaders(204, -1);
@@ -53,8 +53,12 @@ public class EstacionamentoController {
                 Estacionamento novoEtaEstacionamento = gson.fromJson(conteudo, Estacionamento.class);
 
                 salvarEstacionamento(novoEtaEstacionamento);
+                System.out.println(novoEtaEstacionamento);
 
                 enviarResposta(exchange, 200, "Estacionamento Cadastrado com sucesso!");
+            }
+            else {
+                enviarResposta(exchange, 405, "Método não permitido");
             }
         });
     }

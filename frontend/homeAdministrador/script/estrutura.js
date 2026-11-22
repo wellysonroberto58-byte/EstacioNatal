@@ -34,8 +34,8 @@ function mountStructurePage(root) {
   // Cria um piso com um nome inicial e sem setores.
   function createFloor(index) {
     return {
-      name: `Piso ${index + 1}`,
-      sectors: [],
+      identificador: `Piso ${index + 1}`,
+      setores: [],
     };
   }
 
@@ -90,9 +90,13 @@ function mountStructurePage(root) {
         createTextElement(
           "span",
           "floor-tab-name",
-          floor.name || `Piso ${index + 1}`,
+          floor.identificador || `Piso ${index + 1}`,
         ),
-        createTextElement("span", "floor-tab-count", String(floor.sectors.length)),
+        createTextElement(
+          "span",
+          "floor-tab-count",
+          String(floor.setores.length),
+        ),
       );
       elements.floorTabs.append(button);
     });
@@ -113,11 +117,11 @@ function mountStructurePage(root) {
     const title = document.createElement("div");
     title.className = "sector-card-title";
     title.append(
-      createTextElement("strong", "", `Setor ${sector.id}`),
+      createTextElement("strong", "", `Setor ${sector.identificador}`),
       createTextElement(
         "span",
         "",
-        `${sector.spotCount} ${sector.spotCount === 1 ? "vaga" : "vagas"}`,
+        `${sector.quantidadeVaga} ${sector.quantidadeVaga === 1 ? "vaga" : "vagas"}`,
       ),
     );
     content.append(title);
@@ -135,7 +139,7 @@ function mountStructurePage(root) {
 
   // Renderiza os setores cadastrados no piso ativo ou o estado vazio.
   function renderSectors() {
-    const sectors = getActiveFloor().sectors;
+    const sectors = getActiveFloor().setores;
     elements.sectorsList.replaceChildren();
 
     if (sectors.length === 0) {
@@ -167,7 +171,7 @@ function mountStructurePage(root) {
     elements.structureName.value = structureName;
     elements.structureAddress.value = structureAddress;
     elements.floorCount.value = String(floors.length);
-    elements.floorName.value = getActiveFloor().name;
+    elements.floorName.value = getActiveFloor().identificador;
     renderFloorTabs();
     renderSectors();
   }
@@ -179,7 +183,7 @@ function mountStructurePage(root) {
     }
 
     activeFloorIndex = index;
-    elements.floorName.value = getActiveFloor().name;
+    elements.floorName.value = getActiveFloor().identificador;
     renderFloorTabs();
     renderSectors();
     clearStructureMessage();
@@ -190,7 +194,11 @@ function mountStructurePage(root) {
     const nextCount = Number(elements.floorCount.value);
     const previousCount = floors.length;
 
-    if (!Number.isInteger(nextCount) || nextCount < 1 || nextCount > MAX_FLOORS) {
+    if (
+      !Number.isInteger(nextCount) ||
+      nextCount < 1 ||
+      nextCount > MAX_FLOORS
+    ) {
       showStructureMessage(
         `Informe uma quantidade entre 1 e ${MAX_FLOORS} pisos.`,
       );
@@ -200,12 +208,14 @@ function mountStructurePage(root) {
 
     const removedFloors = floors.slice(nextCount);
     const hasConfiguration = removedFloors.some(
-      (floor) => floor.sectors.length > 0,
+      (floor) => floor.setores.length > 0,
     );
     if (
       nextCount < previousCount &&
       hasConfiguration &&
-      !window.confirm("Os pisos removidos e seus setores serão descartados. Deseja continuar?")
+      !window.confirm(
+        "Os pisos removidos e seus setores serão descartados. Deseja continuar?",
+      )
     ) {
       elements.floorCount.value = String(previousCount);
       return;
@@ -249,15 +259,19 @@ function mountStructurePage(root) {
       return;
     }
 
-    if (floor.sectors.some((sector) => sector.id === sectorId)) {
+    if (floor.setores.some((sector) => sector.identificador === sectorId)) {
       elements.sectorId.setCustomValidity(
         "Este identificador já está cadastrado neste piso.",
       );
+
       elements.sectorId.reportValidity();
       return;
     }
 
-    floor.sectors.push({ id: sectorId, spotCount });
+    floor.setores.push({
+      identificador: sectorId,
+      quantidadeVaga: spotCount,
+    });
     elements.sectorId.value = "";
     elements.sectorSpotCount.value = "12";
     renderFloorTabs();
@@ -280,22 +294,32 @@ function mountStructurePage(root) {
     showStructureMessage("Alterações descartadas nesta prévia.", "info");
   }
 
-  // Mantém a tela sem envio nem persistência e informa isso ao usuário.
+  // Evento do envio do formulário + FETCH
   function handleSubmit(event) {
     event.preventDefault();
     elements.structureName.value = elements.structureName.value.trim();
     elements.structureAddress.value = elements.structureAddress.value.trim();
     elements.floorName.value = elements.floorName.value.trim();
 
-    structureName = elements.structureName.value;
-    structureAddress = elements.structureAddress.value;
-    getActiveFloor().name = elements.floorName.value;
+    const nomeEstacionamento = elements.structureName.value;
+    const enderecoEstacionamento = elements.structureAddress.value;
+    const pisosEstacionamento = floors;
+
+    getActiveFloor().identificador = elements.floorName.value;
+
+    const novoEstacionamento = {
+      nome: nomeEstacionamento,
+      endereco: enderecoEstacionamento,
+      pisos: pisosEstacionamento,
+    };
 
     if (!elements.structureForm.reportValidity()) {
       return;
     }
 
-    const unnamedFloorIndex = floors.findIndex((floor) => !floor.name.trim());
+    const unnamedFloorIndex = floors.findIndex(
+      (floor) => !floor.identificador.trim(),
+    );
     if (unnamedFloorIndex !== -1) {
       setActiveFloor(unnamedFloorIndex);
       elements.floorName.setCustomValidity("Informe um nome para este piso.");
@@ -303,11 +327,35 @@ function mountStructurePage(root) {
       return;
     }
 
+    console.log(novoEstacionamento);
+
     renderFloorTabs();
-    showStructureMessage(
-      "Esta tela é apenas uma prévia; o salvamento ainda não está implementado.",
-      "info",
-    );
+
+    fetch("http://localhost:8080/estacioNatal/estacionamentos", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(novoEstacionamento),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Não foi possível cadastrar o estacionamento");
+        }
+
+        return response.text();
+      })
+      .then((dados) => {
+        console.log("ESTACIONAMENTO CADASTRADO COM SUCESSO!");
+
+        elements.structureForm.reset();
+      })
+      .catch((erro) => {
+        console.error("Erro ao cadastrar:", erro);
+        alert(erro.message);
+      });
   }
 
   // Trata cliques nos controles dinâmicos de pisos e setores.
@@ -325,7 +373,7 @@ function mountStructurePage(root) {
     const removeButton = event.target.closest("[data-remove-sector]");
     if (removeButton && elements.sectorsList.contains(removeButton)) {
       const sectorIndex = Number(removeButton.dataset.removeSector);
-      getActiveFloor().sectors.splice(sectorIndex, 1);
+      getActiveFloor().setores.splice(sectorIndex, 1);
       renderFloorTabs();
       renderSectors();
       clearStructureMessage();
@@ -335,7 +383,7 @@ function mountStructurePage(root) {
   elements.floorCount.addEventListener("change", resizeFloors);
   elements.floorName.addEventListener("input", () => {
     elements.floorName.setCustomValidity("");
-    getActiveFloor().name = elements.floorName.value;
+    getActiveFloor().identificador = elements.floorName.value;
     const tabName = elements.floorTabs.querySelector(
       `[data-floor-index="${activeFloorIndex}"] .floor-tab-name`,
     );
