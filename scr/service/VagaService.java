@@ -34,6 +34,25 @@ public class VagaService {
         repository.excluirVaga(id); // caso a vaga existe, ele exclui normal
     }
 
+    public void atualizarStatus(int id, StatusVaga novoStatus) {
+
+        // Verifica se o status recebido é válido
+        if (novoStatus == null) {
+            throw new IllegalArgumentException("Status inválido");
+        }
+
+        // Procura a vaga pelo ID
+        Vaga vagaAlvo = repository.buscarPorId(id);
+
+        // Verifica se a vaga existe
+        if (vagaAlvo == null) {
+            throw new IllegalArgumentException("Vaga não encontrada");
+        }
+
+        // Atualiza o status da vaga
+        vagaAlvo.setStatus(novoStatus);
+    }
+
     public void cadastrarVaga(Vaga vaga){
 
 
@@ -51,7 +70,7 @@ public class VagaService {
 
         //verifica se o identificador está vazio ou em branco
         if (vaga.getIdentificador() == null || vaga.getIdentificador().isBlank()){
-            throw new IllegalArgumentException("Identificador não pode estar vazio");
+            throw new IllegalArgumentException("O identificador não pode ser vazio");
         }
 
         //atualiza o status da vaga para disponível, seu valor padrão

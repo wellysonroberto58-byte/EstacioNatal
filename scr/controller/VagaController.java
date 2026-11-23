@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 
+import model.StatusVaga;
 import model.Vaga;
 import service.VagaService;
 
@@ -35,6 +36,10 @@ public class VagaController {
         service.editarVaga(id, vaga);
     }
 
+    public void atualizarStatus(int id, StatusVaga status) {
+        service.atualizarStatus(id, status);
+    }
+
     public List<Vaga> listarVagas(){
         return service.listarVagas();
     }
@@ -49,6 +54,8 @@ public class VagaController {
             String metodo = exchange.getRequestMethod();
 
             String caminho = exchange.getRequestURI().getPath();
+
+            configurarCors(exchange, metodo);
 
             if (metodo.equals("GET")){
                 List<Vaga> vagas = service.listarVagas();
@@ -69,8 +76,24 @@ public class VagaController {
                 
             }
 
+             else if (metodo.equals("PUT") && caminho.endsWith("/status")) {
+                
+                String[] partes = caminho.split("/");
+                
+                int id = Integer.parseInt(partes[3]);
+                
+                String conteudo = lerCorpo(exchange);
+                
+                StatusVaga status = gson.fromJson(conteudo, StatusVaga.class);
+                
+                atualizarStatus(id, status);
+                
+                enviarResposta(exchange, 200,
+                    gson.toJson("Status atualizado com sucesso!"));
+            }
+                
             else if(metodo.equals("PUT")){
-
+    
                 String[] partes = caminho.split("/");
 
                 int id = Integer.parseInt(partes[3]);
@@ -82,7 +105,9 @@ public class VagaController {
                 editarVaga(id, vagaEditada);
 
                 enviarResposta(exchange, 200, "Vaga atualizada com sucesso!");
-            }
+    
+    
+            } 
             else if(metodo.equals("DELETE")){
                 
                 String[] partes = caminho.split("/");
@@ -129,5 +154,29 @@ public class VagaController {
         exchange.getResponseBody().write(bytes);
 
         exchange.close();
+    }
+
+     public void configurarCors(HttpExchange exchange, String metodo) throws IOException{
+        // Configuração CORS
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Origin", "*"
+            );
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS"
+            );
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Headers",
+                "Content-Type"
+            );
+
+
+            if (metodo.equals("OPTIONS")) {
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
     }
 }

@@ -97,11 +97,47 @@ parkingGrid.addEventListener("click", (event) => {
 });
 
 document.querySelectorAll('input[name="spot-status"]').forEach((input) => {
-  input.addEventListener("change", () => {
+  input.addEventListener("change", async () => {
     const spot = spots.find((item) => item.id === selectedId);
+
     if (!spot) return;
-    spot.status = input.value;
-    renderGrid();
+
+    // Converte o status do frontend para o enum Java
+    const novoStatus = converterStatusParaJava(input.value);
+
+    try {
+      // Envia a atualização para o backend
+      const resposta = await fetch(
+        `http://localhost:8080/estacioNatal/vagas/${spot.backendId}/status`,
+        {
+          method: "PUT",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify(novoStatus),
+        },
+      );
+
+      if (!resposta.ok) {
+        throw new Error("Não foi possível atualizar o status.");
+      }
+
+      // Atualiza a interface somente após a confirmação do servidor
+      spot.status = input.value;
+
+      renderGrid();
+
+      console.log("Status atualizado com sucesso!");
+    } catch (erro) {
+      console.error("Erro ao atualizar status:", erro);
+
+      alert("Não foi possível atualizar o status da vaga.");
+
+      // Restaura a interface para o status anterior
+      renderGrid();
+    }
   });
 });
 
@@ -149,8 +185,17 @@ function converterStatus(statusJava) {
     OCUPADA: "occupied",
     MANUTENCAO: "maintenance",
   };
-
   return status[statusJava] || "available";
+}
+
+function converterStatusParaJava(statusFrontend) {
+  const status = {
+    available: "DISPONIVEL",
+    occupied: "OCUPADO",
+    maintenance: "MANUTENCAO",
+  };
+
+  return status[statusFrontend];
 }
 
 function carregarPisos() {
@@ -214,6 +259,7 @@ function selecionarSetor(index) {
   mapSectorLabel.textContent = "Setor " + setorSelecionado.identificador;
 
   spots = setorSelecionado.vagas.map((vaga) => ({
+    backendId: vaga.id,
     id: vaga.identificador,
     status: converterStatus(vaga.status),
   }));

@@ -37,20 +37,12 @@ public class EstacionamentoController {
 
     public void registrarRotas(HttpServer server){
         server.createContext("/estacioNatal/estacionamentos", exchange -> {
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-
-            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, OPTIONS");
-
-            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
-
-            if (exchange.getRequestMethod().equals("OPTIONS")){
-                exchange.sendResponseHeaders(204, -1);
-                exchange.close();
-                return;
-            }
-
+            
+            
             String metodo = exchange.getRequestMethod();
-
+            
+            configurarCors(exchange, metodo);
+            
             if (metodo.equals("POST")){
                 String conteudo = lerCorpo(exchange);
 
@@ -118,7 +110,29 @@ public class EstacionamentoController {
         return buffer.toString(StandardCharsets.UTF_8);
     }
 
+    public void configurarCors(HttpExchange exchange, String metodo) throws IOException{
+        // Configuração CORS
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Origin", "*"
+            );
 
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS"
+            );
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Headers",
+                "Content-Type"
+            );
+
+
+            if (metodo.equals("OPTIONS")) {
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
+    }
 
 
 

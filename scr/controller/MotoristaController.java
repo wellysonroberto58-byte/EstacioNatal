@@ -87,27 +87,7 @@ public class MotoristaController {
 
             String caminho = exchange.getRequestURI().getPath();
 
-            // Configuração CORS
-            exchange.getResponseHeaders().set(
-                "Access-Control-Allow-Origin", "*"
-            );
-
-            exchange.getResponseHeaders().set(
-                "Access-Control-Allow-Methods",
-                "GET, POST, PUT, DELETE, OPTIONS"
-            );
-
-            exchange.getResponseHeaders().set(
-                "Access-Control-Allow-Headers",
-                "Content-Type"
-            );
-
-
-            if (metodo.equals("OPTIONS")) {
-                exchange.sendResponseHeaders(204, -1);
-                exchange.close();
-                return;
-            }
+            configurarCors(exchange, metodo);
 
             if (metodo.equals("GET")){
                 List<Motorista> motoristas = service.listaMotoristas();
@@ -161,5 +141,29 @@ public class MotoristaController {
         return buffer.toString(StandardCharsets.UTF_8);
     }
 
+     public void configurarCors(HttpExchange exchange, String metodo) throws IOException{
+        // Configuração CORS
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Origin", "*"
+            );
 
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Methods",
+                "GET, POST, PUT, DELETE, OPTIONS"
+            );
+
+            exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Headers",
+                "Content-Type"
+            );
+
+
+            if (metodo.equals("OPTIONS")) {
+                exchange.sendResponseHeaders(204, -1);
+                exchange.close();
+                return;
+            }
+    }
+
+       
 }
