@@ -26,6 +26,10 @@ public class EstacionamentoController {
         service.salvar(estacionamento);
     }
 
+    public Estacionamento buscarPorId(int id) {
+        return service.buscarPorId(id);
+    }
+
     Gson gson = new Gson();
 
 
@@ -56,6 +60,25 @@ public class EstacionamentoController {
                 System.out.println(novoEtaEstacionamento);
 
                 enviarResposta(exchange, 200, "Estacionamento Cadastrado com sucesso!");
+            }
+            if (metodo.equals("GET")){
+                String caminho = exchange.getRequestURI().getPath();
+
+                String idTexto = caminho.substring("/estacioNatal/estacionamentos/".length());
+
+                int id = Integer.parseInt(idTexto);
+
+                Estacionamento estacionamento = buscarPorId(id);
+
+                if (estacionamento == null){
+                    enviarResposta(exchange, 404, "estacionamento não encontrado");
+
+                    return ;
+                }
+
+                String json = gson.toJson(estacionamento);
+
+                enviarResposta(exchange, 200, json);
             }
             else {
                 enviarResposta(exchange, 405, "Método não permitido");

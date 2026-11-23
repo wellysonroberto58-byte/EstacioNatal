@@ -7,7 +7,6 @@ import model.Estacionamento;
 public interface IEstacionamento {
     public void salvar (Estacionamento estacionamento);
 
-    
 
 
     Estacionamento procurarPorId(int id);

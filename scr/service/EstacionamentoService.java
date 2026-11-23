@@ -21,6 +21,10 @@ public class EstacionamentoService {
         this.vagaRepository = vagaRepository;
     }
 
+    public Estacionamento buscarPorId(int id){
+        return repository.procurarPorId(id);
+    }
+
     private List<Vaga> gerarVagas(String setor, int quantidade){
 
         List<Vaga> vagasGeradas = new ArrayList<>();
