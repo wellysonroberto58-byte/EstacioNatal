@@ -18,6 +18,12 @@ const statusLabels = {
   maintenance: "Manutenção",
 };
 
+const statusIcons = {
+  available: "../assets/DISPONIVEL.svg",
+  occupied: "../assets/OCUPADO.svg",
+  maintenance: "../assets/MANUTENCAO.svg",
+};
+
 let estacionamento = null;
 let pisoSelecionado = null;
 let setorSelecionado = null;
@@ -75,13 +81,12 @@ function renderGrid() {
     const code = document.createElement("span");
     code.className = "spot-code";
     code.textContent = spot.id;
-    const car = document.createElement("span");
-    car.className = "spot-car";
-    car.setAttribute("aria-hidden", "true");
-    const mark = document.createElement("span");
-    mark.className = "spot-status-mark";
-    mark.setAttribute("aria-hidden", "true");
-    button.append(code, car, mark);
+    const icon = document.createElement("img");
+    icon.className = "spot-icon";
+    icon.src = statusIcons[spot.status];
+    icon.alt = "";
+    icon.setAttribute("aria-hidden", "true");
+    button.append(icon, code);
     parkingGrid.append(button);
   });
 
@@ -182,6 +187,7 @@ async function carregarEstacionamento() {
 function converterStatus(statusJava) {
   const status = {
     DISPONIVEL: "available",
+    OCUPADO: "occupied",
     OCUPADA: "occupied",
     MANUTENCAO: "maintenance",
   };
@@ -277,5 +283,3 @@ floorSelect.addEventListener("change", () => {
 sectorSelect.addEventListener("change", () => {
   selecionarSetor(Number(sectorSelect.value));
 });
-
-carregarEstacionamento();
