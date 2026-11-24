@@ -13,13 +13,19 @@
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="../cadastro/cadastro.html" aria-label="Estácio Natal">
+      <a
+        class="brand"
+        href="../cadastro/cadastro.html"
+        aria-label="Estácio Natal"
+      >
         <span class="brand-mark" aria-hidden="true">E</span>
         <span>Estácio<span class="brand-accent">Natal</span></span>
       </a>
 
       <nav class="main-nav" aria-label="Navegação principal">
-        <a class="nav-link nav-link-active" href="#estacionamento">Estacionamento</a>
+        <a class="nav-link nav-link-active" href="#estacionamento"
+          >Estacionamento</a
+        >
         <a class="nav-link" href="#como-funciona">Como funciona</a>
       </nav>
 
@@ -31,7 +37,11 @@
           </svg>
           <span>Natal, RN</span>
         </span>
-        <a class="profile-button" href="../login/login.html" aria-label="Entrar na sua conta">
+        <a
+          class="profile-button"
+          href="../login/login.html"
+          aria-label="Entrar na sua conta"
+        >
           <span class="profile-avatar" aria-hidden="true">M</span>
           <span>Entrar</span>
         </a>
@@ -77,7 +87,9 @@
         </label>
         <div class="search-note" role="status" aria-live="polite">
           <span class="search-note-icon" aria-hidden="true">i</span>
-          <span id="parking-search-message">Ex.: Estácio Natal ou Natal, RN</span>
+          <span id="parking-search-message"
+            >Ex.: Estácio Natal ou Natal, RN</span
+          >
         </div>
       </section>
 
@@ -86,18 +98,18 @@
         id="parking-content"
         data-parking-search="Estacionamento Estácio Natal Campus Natal Natal RN"
       >
+        <!-- MAPA -->
         <section class="map-card" aria-labelledby="map-title">
           <div class="map-card-header">
             <div>
               <p class="section-kicker">MAPA DO ESTACIONAMENTO</p>
               <h2 id="map-title">Escolha sua vaga</h2>
             </div>
+            <!-- PISO -->
             <label class="floor-select">
               <span>Piso</span>
-              <select id="floor-select" aria-label="Selecionar piso">
-                <option value="G1">G1 · Térreo</option>
-                <option value="G2">G2 · Subsolo 1</option>
-                <option value="G3">G3 · Subsolo 2</option>
+              <select id="floor-select" aria-label="Selecionar piso" disabled>
+                <option value="">Carregando pisos...</option>
               </select>
             </label>
           </div>
@@ -105,14 +117,23 @@
           <div class="map-controls">
             <div class="sector-picker" aria-label="Selecionar setor">
               <span class="control-label">Setor</span>
-              <div class="sector-options">
-                <button class="sector-button is-active" type="button" data-sector="A" aria-pressed="true">A</button>
-                <button class="sector-button" type="button" data-sector="B" aria-pressed="false">B</button>
-                <button class="sector-button" type="button" data-sector="C" aria-pressed="false">C</button>
+              <div class="sector-options" id="sector-options">
+                <!-- Os setores serão adicionados pela API -->
               </div>
             </div>
-            <button class="accessibility-toggle" id="accessibility-toggle" type="button" aria-pressed="false">
-              <span class="accessibility-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="4" r="2" /><path d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4" /></svg></span>
+            <button
+              class="accessibility-toggle"
+              id="accessibility-toggle"
+              type="button"
+              aria-pressed="false"
+            >
+              <span class="accessibility-icon" aria-hidden="true"
+                ><svg viewBox="0 0 24 24">
+                  <circle cx="9" cy="4" r="2" />
+                  <path
+                    d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4"
+                  /></svg
+              ></span>
               <span>Acessíveis</span>
               <span class="toggle-track" aria-hidden="true"><span></span></span>
             </button>
@@ -122,68 +143,69 @@
             <span><i class="legend-dot legend-available"></i>Disponível</span>
             <span><i class="legend-dot legend-selected"></i>Selecionada</span>
             <span><i class="legend-dot legend-occupied"></i>Ocupada</span>
-            <span><i class="legend-accessible" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="4" r="2" /><path d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4" /></svg></i>Acessível</span>
+            <span
+              ><i class="legend-accessible" aria-hidden="true"
+                ><svg viewBox="0 0 24 24">
+                  <circle cx="9" cy="4" r="2" />
+                  <path
+                    d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4"
+                  /></svg></i
+              >Acessível</span
+            >
           </div>
 
-          <div class="parking-map" aria-label="Mapa de vagas do piso G1, setor A">
-            <div class="map-aisle aisle-top"><span>ENTRADA</span><span>↘</span></div>
-            <div class="parking-row" aria-label="Vagas da fileira superior">
-              <button class="parking-spot" type="button" data-spot="A-01" data-sector="A" data-available="true" aria-label="Vaga A-01, disponível">
-                <span class="spot-car" aria-hidden="true"></span><span>A-01</span>
-              </button>
-              <button class="parking-spot is-occupied" type="button" data-spot="A-02" data-sector="A" data-available="false" aria-label="Vaga A-02, ocupada" disabled>
-                <span class="spot-car" aria-hidden="true"></span><span>A-02</span>
-              </button>
-              <button class="parking-spot" type="button" data-spot="A-03" data-sector="A" data-available="true" aria-label="Vaga A-03, disponível">
-                <span class="spot-car" aria-hidden="true"></span><span>A-03</span>
-              </button>
-              <button class="parking-spot is-accessible" type="button" data-spot="A-04" data-sector="A" data-available="true" data-accessible="true" aria-label="Vaga A-04, acessível e disponível">
-                <span class="accessible-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="4" r="2" /><path d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4" /></svg></span><span>A-04</span>
-              </button>
+          <div class="parking-map" aria-label="Mapa de vagas">
+            <div class="parking-row" id="parking-row-top">
+              <!-- Vagas da primeira fileira serão adicionadas pelo JavaScript -->
             </div>
-            <div class="map-aisle aisle-middle"><span>↕</span><span>VIA DE CIRCULAÇÃO</span><span>↕</span></div>
-            <div class="parking-row parking-row-bottom" aria-label="Vagas da fileira inferior">
-              <button class="parking-spot is-occupied" type="button" data-spot="A-05" data-sector="A" data-available="false" aria-label="Vaga A-05, ocupada" disabled>
-                <span class="spot-car" aria-hidden="true"></span><span>A-05</span>
-              </button>
-              <button class="parking-spot is-accessible" type="button" data-spot="A-06" data-sector="A" data-available="true" data-accessible="true" aria-label="Vaga A-06, acessível e disponível">
-                <span class="accessible-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="4" r="2" /><path d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4" /></svg></span><span>A-06</span>
-              </button>
-              <button class="parking-spot" type="button" data-spot="A-07" data-sector="A" data-available="true" aria-label="Vaga A-07, disponível">
-                <span class="spot-car" aria-hidden="true"></span><span>A-07</span>
-              </button>
-              <button class="parking-spot is-occupied" type="button" data-spot="A-08" data-sector="A" data-available="false" aria-label="Vaga A-08, ocupada" disabled>
-                <span class="spot-car" aria-hidden="true"></span><span>A-08</span>
-              </button>
+
+            <div class="parking-row parking-row-bottom" id="parking-row-bottom">
+              <!-- Vagas da segunda fileira serão adicionadas pelo JavaScript -->
             </div>
-            <div class="map-aisle aisle-bottom"><span>← SENTIDO DE CIRCULAÇÃO</span><span>SAÍDA ↗</span></div>
           </div>
 
-          <p class="map-feedback" id="map-feedback" role="status" aria-live="polite">
+          <p
+            class="map-feedback"
+            id="map-feedback"
+            role="status"
+            aria-live="polite"
+          >
             Selecione uma vaga disponível no mapa.
           </p>
         </section>
 
         <aside class="details-column">
-          <section class="availability-card" aria-labelledby="availability-title">
+          <section
+            class="availability-card"
+            aria-labelledby="availability-title"
+          >
             <div class="availability-heading">
               <span class="availability-icon" aria-hidden="true">P</span>
               <span class="availability-label">EXEMPLO DE DISPONIBILIDADE</span>
             </div>
-            <h2 id="availability-title">Seu lugar está<br />esperando por você.</h2>
-            <p>Encontre uma vaga livre e aproveite melhor o seu tempo no campus.</p>
+            <h2 id="availability-title">
+              Seu lugar está<br />esperando por você.
+            </h2>
+            <p>
+              Encontre uma vaga livre e aproveite melhor o seu tempo no campus.
+            </p>
             <div class="availability-count">
               <strong id="available-count">5</strong>
               <span>vagas disponíveis<br />neste setor</span>
             </div>
-            <div class="availability-meter" aria-hidden="true"><span></span></div>
+            <div class="availability-meter" aria-hidden="true">
+              <span></span>
+            </div>
             <p class="meter-caption">Ocupação do setor <strong>38%</strong></p>
           </section>
 
           <section class="selection-card" aria-labelledby="selection-title">
             <div class="selection-card-heading">
               <span class="selection-pin" aria-hidden="true">
-                <svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg>
               </span>
               <div>
                 <p class="section-kicker">SUA ESCOLHA</p>
@@ -193,7 +215,12 @@
             <p class="selection-description" id="selection-description">
               Toque em uma vaga disponível no mapa para ver os detalhes.
             </p>
-            <a class="button button-primary" href="../login/login.html" id="continue-button" aria-disabled="true">
+            <a
+              class="button button-primary"
+              href="../login/login.html"
+              id="continue-button"
+              aria-disabled="true"
+            >
               Entrar para continuar <span aria-hidden="true">→</span>
             </a>
             <p class="selection-note">A seleção não reserva a vaga.</p>
@@ -201,13 +228,19 @@
 
           <section class="help-card" id="como-funciona">
             <span class="help-icon" aria-hidden="true">?</span>
-            <p><strong>Precisa de ajuda?</strong><br />As vagas acessíveis estão sinalizadas no mapa.</p>
+            <p>
+              <strong>Precisa de ajuda?</strong><br />As vagas acessíveis estão
+              sinalizadas no mapa.
+            </p>
           </section>
         </aside>
       </div>
 
       <footer class="page-footer">
-        <span>Estácio Natal <span aria-hidden="true">·</span> Mobilidade no campus</span>
+        <span
+          >Estácio Natal <span aria-hidden="true">·</span> Mobilidade no
+          campus</span
+        >
         <span>Precisa de suporte? Consulte a equipe do campus.</span>
       </footer>
     </main>

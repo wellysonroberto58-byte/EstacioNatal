@@ -1,7 +1,6 @@
 package model;
 
 public enum TipoVaga {
-    CARRO,
-    MOTO,
-    PRIORIDADE
+    NAO_ACESSIVEL,
+    ACESSIVEL
 }
