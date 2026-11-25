@@ -1,285 +1,320 @@
-const parkingGrid = document.querySelector("#parking-grid");
-const selectedTitle = document.querySelector("#selected-title");
-const selectedEmpty = document.querySelector("#selected-empty");
-const spotActions = document.querySelector("#spot-actions");
-const selectedStatus = document.querySelector("#selected-status");
-const addSpotButton = document.querySelector("#add-spot");
-const deleteSpotButton = document.querySelector("#delete-spot");
+const gradeVagas = document.querySelector("#parking-grid");
+const tituloVagaSelecionada = document.querySelector("#selected-title");
+const mensagemVagaVazia = document.querySelector("#selected-empty");
+const acoesVaga = document.querySelector("#spot-actions");
+const statusVagaSelecionada = document.querySelector("#selected-status");
+const botaoAdicionarVaga = document.querySelector("#add-spot");
+const botaoExcluirVaga = document.querySelector("#delete-spot");
+const seletorPiso = document.querySelector("#floor-select");
+const seletorSetor = document.querySelector("#sector-select");
+const identificacaoPisoMapa = document.querySelector("#map-floor-label");
+const identificacaoSetorMapa = document.querySelector("#map-sector-label");
 
-const floorSelect = document.querySelector("#floor-select");
-const sectorSelect = document.querySelector("#sector-select");
-
-const mapFloorLabel = document.querySelector("#map-floor-label");
-const mapSectorLabel = document.querySelector("#map-sector-label");
-
-const statusLabels = {
+const rotulosStatus = {
   available: "Disponível",
   occupied: "Ocupado",
   maintenance: "Manutenção",
 };
 
-const statusIcons = {
+const imagensStatus = {
   available: "../assets/DISPONIVEL.svg",
   occupied: "../assets/OCUPADO.svg",
   maintenance: "../assets/MANUTENCAO.svg",
 };
 
-let estacionamento = null;
+let estacionamentoAtual = null;
 let pisoSelecionado = null;
 let setorSelecionado = null;
+let identificadorVagaSelecionada = null;
+let vagasDoSetor = [];
+let proximoNumeroVaga = 1;
 
-let selectedId = null;
-let spots = [];
-
-function statusClass(element, status) {
-  element.classList.remove("available", "occupied", "maintenance");
-  element.classList.add(status);
+function aplicarClasseStatus(elemento, status) {
+  elemento.classList.remove("available", "occupied", "maintenance");
+  elemento.classList.add(status);
 }
 
-function renderSummary() {
-  const counts = { available: 0, occupied: 0, maintenance: 0 };
-  spots.forEach((spot) => counts[spot.status]++);
-  document.querySelector("#available-count").textContent = counts.available;
-  document.querySelector("#occupied-count").textContent = counts.occupied;
-  document.querySelector("#maintenance-count").textContent = counts.maintenance;
+function contarVagas() {
+  const totais = { available: 0, occupied: 0, maintenance: 0 };
+  vagasDoSetor.forEach((vaga) => {
+    totais[vaga.status] += 1;
+  });
+
+  document.querySelector("#available-count").textContent = totais.available;
+  document.querySelector("#occupied-count").textContent = totais.occupied;
+  document.querySelector("#maintenance-count").textContent = totais.maintenance;
 }
 
-function renderSelection() {
-  const spot = spots.find((item) => item.id === selectedId);
-  if (!spot) {
-    selectedTitle.textContent = "Nenhuma vaga";
-    selectedEmpty.hidden = false;
-    spotActions.hidden = true;
+function renderizarVaga(vaga) {
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.className = `parking-spot ${vaga.status}`;
+  botao.dataset.spotId = vaga.identificador;
+  botao.setAttribute(
+    "aria-label",
+    `Vaga ${vaga.identificador}: ${rotulosStatus[vaga.status]}`,
+  );
+  botao.setAttribute(
+    "aria-selected",
+    String(vaga.identificador === identificadorVagaSelecionada),
+  );
+
+  const imagem = document.createElement("img");
+  imagem.className = "spot-icon";
+  imagem.src = imagensStatus[vaga.status];
+  imagem.alt = "";
+  imagem.setAttribute("aria-hidden", "true");
+
+  const identificador = document.createElement("span");
+  identificador.className = "spot-code";
+  identificador.textContent = vaga.identificador;
+  botao.append(imagem, identificador);
+  return botao;
+}
+
+function renderizarSelecao() {
+  const vaga = vagasDoSetor.find(
+    (item) => item.identificador === identificadorVagaSelecionada,
+  );
+
+  if (!vaga) {
+    tituloVagaSelecionada.textContent = "Nenhuma vaga";
+    mensagemVagaVazia.hidden = false;
+    acoesVaga.hidden = true;
     return;
   }
 
-  selectedTitle.textContent = `Vaga ${spot.id}`;
-  selectedEmpty.hidden = true;
-  spotActions.hidden = false;
-  selectedStatus.textContent = statusLabels[spot.status];
-  statusClass(selectedStatus, spot.status);
+  tituloVagaSelecionada.textContent = `Vaga ${vaga.identificador}`;
+  mensagemVagaVazia.hidden = true;
+  acoesVaga.hidden = false;
+  statusVagaSelecionada.textContent = rotulosStatus[vaga.status];
+  aplicarClasseStatus(statusVagaSelecionada, vaga.status);
 
-  const statusInput = document.querySelector(
-    `input[name="spot-status"][value="${spot.status}"]`,
+  const opcaoStatus = document.querySelector(
+    `input[name="spot-status"][value="${vaga.status}"]`,
   );
-  if (statusInput) statusInput.checked = true;
+  if (opcaoStatus) {
+    opcaoStatus.checked = true;
+  }
 }
 
-function renderGrid() {
-  parkingGrid.replaceChildren();
-  spots.forEach((spot) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `parking-spot ${spot.status}`;
-    button.dataset.spotId = spot.id;
-    button.setAttribute(
-      "aria-label",
-      `Vaga ${spot.id}: ${statusLabels[spot.status]}`,
+function renderizarMapa() {
+  gradeVagas.replaceChildren();
+  vagasDoSetor.forEach((vaga) => gradeVagas.append(renderizarVaga(vaga)));
+  contarVagas();
+  renderizarSelecao();
+}
+
+// Converte o enum da API para os rótulos e classes usados pela interface.
+function converterStatus(statusApi) {
+  const statusPorApi = {
+    DISPONIVEL: "available",
+    OCUPADO: "occupied",
+    OCUPADA: "occupied",
+    MANUTENCAO: "maintenance",
+  };
+  return statusPorApi[statusApi] || "available";
+}
+
+function converterStatusParaApi(status) {
+  const statusParaApi = {
+    available: "DISPONIVEL",
+    occupied: "OCUPADO",
+    maintenance: "MANUTENCAO",
+  };
+  return statusParaApi[status];
+}
+
+function selecionarVaga(identificador) {
+  identificadorVagaSelecionada = identificador;
+  renderizarMapa();
+}
+
+async function atualizarStatusVaga(status) {
+  const vaga = vagasDoSetor.find(
+    (item) => item.identificador === identificadorVagaSelecionada,
+  );
+  if (!vaga) {
+    return;
+  }
+
+  const statusAnterior = vaga.status;
+  const novoStatus = status;
+  const setorDaVaga = setorSelecionado;
+
+  // Vagas adicionadas nesta prévia ainda não possuem identificador no servidor.
+  if (vaga.idApi === null) {
+    vaga.status = novoStatus;
+    renderizarMapa();
+    return;
+  }
+
+  try {
+    const resposta = await fetch(
+      `http://localhost:8080/estacioNatal/vagas/${vaga.idApi}/status`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(converterStatusParaApi(novoStatus)),
+      },
     );
-    button.setAttribute("aria-selected", String(spot.id === selectedId));
-
-    const code = document.createElement("span");
-    code.className = "spot-code";
-    code.textContent = spot.id;
-    const icon = document.createElement("img");
-    icon.className = "spot-icon";
-    icon.src = statusIcons[spot.status];
-    icon.alt = "";
-    icon.setAttribute("aria-hidden", "true");
-    button.append(icon, code);
-    parkingGrid.append(button);
-  });
-
-  renderSummary();
-  renderSelection();
-}
-
-parkingGrid.addEventListener("click", (event) => {
-  const spotButton = event.target.closest("[data-spot-id]");
-  if (!spotButton) return;
-  selectedId = spotButton.dataset.spotId;
-  renderGrid();
-});
-
-document.querySelectorAll('input[name="spot-status"]').forEach((input) => {
-  input.addEventListener("change", async () => {
-    const spot = spots.find((item) => item.id === selectedId);
-
-    if (!spot) return;
-
-    // Converte o status do frontend para o enum Java
-    const novoStatus = converterStatusParaJava(input.value);
-
-    try {
-      // Envia a atualização para o backend
-      const resposta = await fetch(
-        `http://localhost:8080/estacioNatal/vagas/${spot.backendId}/status`,
-        {
-          method: "PUT",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify(novoStatus),
-        },
-      );
-
-      if (!resposta.ok) {
-        throw new Error("Não foi possível atualizar o status.");
-      }
-
-      // Atualiza a interface somente após a confirmação do servidor
-      spot.status = input.value;
-
-      renderGrid();
-
-      console.log("Status atualizado com sucesso!");
-    } catch (erro) {
-      console.error("Erro ao atualizar status:", erro);
-
-      alert("Não foi possível atualizar o status da vaga.");
-
-      // Restaura a interface para o status anterior
-      renderGrid();
+    if (!resposta.ok) {
+      throw new Error("Não foi possível atualizar o status da vaga.");
     }
-  });
-});
 
-addSpotButton.addEventListener("click", () => {
-  const id = `A-${String(nextNumber).padStart(2, "0")}`;
-  nextNumber++;
-  spots.push({ id, status: "available" });
-  selectedId = id;
-  renderGrid();
-});
+    const vagaOriginal = setorDaVaga.vagas?.find(
+      (item) => item.id === vaga.idApi,
+    );
+    if (vagaOriginal) {
+      vagaOriginal.status = converterStatusParaApi(novoStatus);
+    }
 
-deleteSpotButton.addEventListener("click", () => {
-  if (!selectedId) return;
-  if (!window.confirm(`Deseja excluir a vaga ${selectedId}?`)) return;
-  spots = spots.filter((spot) => spot.id !== selectedId);
-  selectedId = spots[0]?.id ?? null;
-  renderGrid();
-});
-
-carregarEstacionamento();
+    vaga.status = novoStatus;
+    renderizarMapa();
+  } catch (erro) {
+    console.error("Erro ao atualizar o status da vaga:", erro);
+    alert(erro.message || "Não foi possível atualizar o status da vaga.");
+    vaga.status = statusAnterior;
+    renderizarMapa();
+  }
+}
 
 async function carregarEstacionamento() {
   try {
     const resposta = await fetch(
       "http://localhost:8080/estacioNatal/estacionamentos/1",
     );
-
     if (!resposta.ok) {
-      throw new Error("Erro ao carregar o estacionamento.");
+      throw new Error("Não foi possível carregar o estacionamento.");
     }
 
-    estacionamento = await resposta.json();
-
-    console.log("Estacionamento carregado:", estacionamento);
-
+    estacionamentoAtual = await resposta.json();
     carregarPisos();
   } catch (erro) {
-    console.log("ERRO:", erro);
+    console.error("Erro ao carregar estacionamento:", erro);
+    mensagemVagaVazia.textContent =
+      erro.message || "Não foi possível carregar o estacionamento.";
   }
 }
 
-function converterStatus(statusJava) {
-  const status = {
-    DISPONIVEL: "available",
-    OCUPADO: "occupied",
-    OCUPADA: "occupied",
-    MANUTENCAO: "maintenance",
-  };
-  return status[statusJava] || "available";
-}
-
-function converterStatusParaJava(statusFrontend) {
-  const status = {
-    available: "DISPONIVEL",
-    occupied: "OCUPADO",
-    maintenance: "MANUTENCAO",
-  };
-
-  return status[statusFrontend];
-}
-
 function carregarPisos() {
-  floorSelect.replaceChildren();
-
-  estacionamento.pisos.forEach((piso, index) => {
-    const option = document.createElement("option");
-
-    option.value = index;
-    option.textContent = piso.identificador;
-
-    floorSelect.append(option);
+  seletorPiso.replaceChildren();
+  estacionamentoAtual.pisos.forEach((piso, indice) => {
+    const opcao = document.createElement("option");
+    opcao.value = String(indice);
+    opcao.textContent = piso.identificador;
+    seletorPiso.append(opcao);
   });
 
-  if (estacionamento.pisos.length > 0) {
-    floorSelect.disabled = false;
+  seletorPiso.disabled = estacionamentoAtual.pisos.length === 0;
+  if (estacionamentoAtual.pisos.length > 0) {
     selecionarPiso(0);
   }
 }
 
-function selecionarPiso(index) {
-  pisoSelecionado = estacionamento.pisos[index];
+function selecionarPiso(indice) {
+  pisoSelecionado = estacionamentoAtual.pisos[indice];
+  if (!pisoSelecionado) {
+    return;
+  }
 
-  mapFloorLabel.textContent = pisoSelecionado.identificador;
-
+  identificacaoPisoMapa.textContent = pisoSelecionado.identificador;
   carregarSetores();
 }
 
 function carregarSetores() {
-  sectorSelect.replaceChildren();
+  seletorSetor.replaceChildren();
+  const setores = Array.isArray(pisoSelecionado.setores)
+    ? pisoSelecionado.setores
+    : [];
 
-  pisoSelecionado.setores.forEach((setor, index) => {
-    const option = document.createElement("option");
-
-    option.value = index;
-    option.textContent = setor.identificador;
-
-    sectorSelect.append(option);
+  setores.forEach((setor, indice) => {
+    const opcao = document.createElement("option");
+    opcao.value = String(indice);
+    opcao.textContent = setor.identificador;
+    seletorSetor.append(opcao);
   });
 
-  if (pisoSelecionado.setores.length > 0) {
-    sectorSelect.disabled = false;
+  seletorSetor.disabled = setores.length === 0;
+  if (setores.length > 0) {
     selecionarSetor(0);
-  } else {
-    sectorSelect.disabled = true;
-    mapSectorLabel.textContent = "Nenhum setor";
-
-    spots = [];
-    selectedId = null;
-
-    renderGrid();
+    return;
   }
+
+  identificacaoSetorMapa.textContent = "Nenhum setor";
+  vagasDoSetor = [];
+  identificadorVagaSelecionada = null;
+  renderizarMapa();
 }
 
-function selecionarSetor(index) {
-  setorSelecionado = pisoSelecionado.setores[index];
+function selecionarSetor(indice) {
+  setorSelecionado = pisoSelecionado.setores[indice];
+  if (!setorSelecionado) {
+    return;
+  }
 
-  console.log("Piso selecionado:", pisoSelecionado);
-  console.log("Setor selecionado:", setorSelecionado);
-
-  mapSectorLabel.textContent = "Setor " + setorSelecionado.identificador;
-
-  spots = setorSelecionado.vagas.map((vaga) => ({
-    backendId: vaga.id,
-    id: vaga.identificador,
+  identificacaoSetorMapa.textContent = `Setor ${setorSelecionado.identificador}`;
+  vagasDoSetor = (setorSelecionado.vagas || []).map((vaga) => ({
+    idApi: vaga.id,
+    identificador: vaga.identificador,
     status: converterStatus(vaga.status),
   }));
-
-  selectedId = spots[0]?.id ?? null;
-
-  renderGrid();
+  identificadorVagaSelecionada = vagasDoSetor[0]?.identificador ?? null;
+  proximoNumeroVaga = 1;
+  renderizarMapa();
 }
 
-// Eventos dos seletores
-floorSelect.addEventListener("change", () => {
-  selecionarPiso(Number(floorSelect.value));
+gradeVagas.addEventListener("click", (evento) => {
+  if (!(evento.target instanceof Element)) {
+    return;
+  }
+
+  const botaoVaga = evento.target.closest("[data-spot-id]");
+  if (botaoVaga) {
+    selecionarVaga(botaoVaga.dataset.spotId);
+  }
 });
 
-sectorSelect.addEventListener("change", () => {
-  selecionarSetor(Number(sectorSelect.value));
+document.querySelectorAll('input[name="spot-status"]').forEach((opcao) => {
+  opcao.addEventListener("change", () => atualizarStatusVaga(opcao.value));
 });
+
+botaoAdicionarVaga.addEventListener("click", () => {
+  let identificador = `A-${String(proximoNumeroVaga).padStart(2, "0")}`;
+  while (vagasDoSetor.some((vaga) => vaga.identificador === identificador)) {
+    proximoNumeroVaga += 1;
+    identificador = `A-${String(proximoNumeroVaga).padStart(2, "0")}`;
+  }
+  proximoNumeroVaga += 1;
+  vagasDoSetor.push({
+    idApi: null,
+    identificador,
+    status: "available",
+  });
+  selecionarVaga(identificador);
+});
+
+botaoExcluirVaga.addEventListener("click", () => {
+  if (!identificadorVagaSelecionada) {
+    return;
+  }
+  if (!window.confirm(`Deseja excluir a vaga ${identificadorVagaSelecionada}?`)) {
+    return;
+  }
+
+  vagasDoSetor = vagasDoSetor.filter(
+    (vaga) => vaga.identificador !== identificadorVagaSelecionada,
+  );
+  identificadorVagaSelecionada = vagasDoSetor[0]?.identificador ?? null;
+  renderizarMapa();
+});
+
+seletorPiso.addEventListener("change", () => {
+  selecionarPiso(Number(seletorPiso.value));
+});
+
+seletorSetor.addEventListener("change", () => {
+  selecionarSetor(Number(seletorSetor.value));
+});
+
+carregarEstacionamento();

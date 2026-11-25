@@ -93,15 +93,11 @@ a:focus-visible {
 }
 
 .brand-mark {
-  display: grid;
+  display: block;
   width: 35px;
   height: 35px;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--red);
-  color: var(--page-background);
-  font-size: 18px;
-  font-weight: 800;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
 .brand-accent {
@@ -947,7 +943,6 @@ a:focus-visible {
   .brand-mark {
     width: 31px;
     height: 31px;
-    font-size: 16px;
   }
 
   .topbar-title {
@@ -1124,8 +1119,6 @@ a:focus-visible {
   .brand-mark {
     width: 28px;
     height: 28px;
-    border-radius: 8px;
-    font-size: 14px;
   }
 
   .topbar-title h1 {

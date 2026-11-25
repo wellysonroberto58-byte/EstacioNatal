@@ -1,102 +1,86 @@
-const form = document.querySelector(".signup-form");
-const password = document.querySelector("#password");
-const confirmPassword = document.querySelector("#confirm-password");
-const formMessage = document.querySelector(".form-message");
+const formularioCadastro = document.querySelector(".signup-form");
+const campoSenha = document.querySelector("#password");
+const confirmacaoSenha = document.querySelector("#confirm-password");
+const mensagemCadastro = document.querySelector(".form-message");
 
-function validatePasswordMatch() {
-  if (confirmPassword.value === password.value) {
-    confirmPassword.setCustomValidity("");
-  } else {
-    confirmPassword.setCustomValidity("As senhas não coincidem.");
-  }
+function validarConfirmacaoSenha() {
+  confirmacaoSenha.setCustomValidity(
+    confirmacaoSenha.value === campoSenha.value
+      ? ""
+      : "As senhas não coincidem.",
+  );
 }
 
-password.addEventListener("input", validatePasswordMatch);
-confirmPassword.addEventListener("input", validatePasswordMatch);
+function mostrarMensagemCadastro(mensagem, estado) {
+  mensagemCadastro.textContent = mensagem;
+  mensagemCadastro.dataset.state = estado;
+  mensagemCadastro.hidden = false;
+}
 
-form.addEventListener(
+campoSenha.addEventListener("input", validarConfirmacaoSenha);
+confirmacaoSenha.addEventListener("input", validarConfirmacaoSenha);
+
+// Mantém a validação do navegador e informa como corrigir os campos.
+formularioCadastro.addEventListener(
   "invalid",
   () => {
-    formMessage.dataset.state = "error";
-    formMessage.textContent =
-      "Confira os campos destacados e corrija os dados.";
-    formMessage.hidden = false;
+    mostrarMensagemCadastro(
+      "Confira os campos destacados e corrija os dados.",
+      "error",
+    );
   },
   true,
 );
 
-form.addEventListener("input", () => {
+formularioCadastro.addEventListener("input", () => {
   if (
-    formMessage.dataset.state === "error" &&
-    form.querySelector(":invalid") === null
+    mensagemCadastro.dataset.state === "error" &&
+    formularioCadastro.querySelector(":invalid") === null
   ) {
-    formMessage.hidden = true;
+    mensagemCadastro.hidden = true;
   }
 });
 
-form.addEventListener("reset", () => {
-  confirmPassword.setCustomValidity("");
-  delete formMessage.dataset.state;
-  formMessage.textContent = "";
-  formMessage.hidden = true;
+formularioCadastro.addEventListener("reset", () => {
+  confirmacaoSenha.setCustomValidity("");
+  mensagemCadastro.textContent = "";
+  mensagemCadastro.hidden = true;
+  delete mensagemCadastro.dataset.state;
 });
 
-//URL + FETCH
-const formulario = document.querySelector(".signup-form");
-
-formulario.addEventListener("submit", (evento) => {
+// Envia ao backend somente os dados esperados pelo cadastro de motorista.
+formularioCadastro.addEventListener("submit", async (evento) => {
   evento.preventDefault();
 
-  const nome = document.querySelector("#name").value;
-  const email = document.querySelector("#email").value;
-  const placa = document.querySelector("#placa").value;
-  const cpf = document.querySelector("#cpf").value;
-
-  const senha = document.querySelector("#password").value;
-
   const novoMotorista = {
-    nome: nome,
-    email: email,
-    cpf: cpf,
-    senhaHash: senha,
-    placa: placa,
+    nome: document.querySelector("#name").value.trim(),
+    email: document.querySelector("#email").value.trim(),
+    placa: document.querySelector("#placa").value.trim(),
+    cpf: document.querySelector("#cpf").value.trim(),
+    senhaHash: campoSenha.value,
   };
 
-  fetch("http://localhost:8080/estacioNatal/motoristas", {
-    method: "POST",
+  try {
+    const resposta = await fetch(
+      "http://localhost:8080/estacioNatal/motoristas",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novoMotorista),
+      },
+    );
+    if (!resposta.ok) {
+      throw new Error("Não foi possível cadastrar o motorista.");
+    }
 
-    headers: {
-      "Content-Type": "application/json",
-    },
-
-    body: JSON.stringify(novoMotorista),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Não foi possível cadastrar o motorista");
-      }
-
-      return response.text();
-    })
-    .then((dados) => {
-      console.log("MOTORISTA CADASTRADO COM SUCESSO!");
-
-      const mensagem = document.createElement("div");
-
-      mensagem.textContent = "Cadastro realizado com sucesso!";
-
-      mensagem.classList.add("mensagem-sucesso");
-
-      document.body.appendChild(mensagem);
-
-      setTimeout(() => {
-        mensagem.remove();
-      }, 3000);
-
-      formulario.reset();
-    })
-    .catch((erro) => {
-      console.error("Erro ao cadastrar:", erro);
-      alert(erro.message);
-    });
+    await resposta.text();
+    formularioCadastro.reset();
+    mostrarMensagemCadastro("Cadastro realizado com sucesso.", "success");
+  } catch (erro) {
+    console.error("Erro ao cadastrar motorista:", erro);
+    mostrarMensagemCadastro(
+      erro.message || "Não foi possível conectar ao serviço de cadastro.",
+      "error",
+    );
+  }
 });

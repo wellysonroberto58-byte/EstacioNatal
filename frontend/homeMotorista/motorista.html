@@ -18,7 +18,7 @@
         href="../cadastro/cadastro.html"
         aria-label="Estácio Natal"
       >
-        <span class="brand-mark" aria-hidden="true">E</span>
+        <img class="brand-mark" src="../assets/Logo.svg" alt="" aria-hidden="true" />
         <span>Estácio<span class="brand-accent">Natal</span></span>
       </a>
 
@@ -35,7 +35,7 @@
             <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
             <circle cx="12" cy="10" r="2.5" />
           </svg>
-          <span>Natal, RN</span>
+          <span id="parking-location">Local não informado</span>
         </span>
         <a
           class="profile-button"
@@ -57,14 +57,9 @@
             Escolha onde estacionar e chegue com tranquilidade.
           </p>
         </div>
-        <div class="live-status">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span>Prévia interativa</span>
-          <span class="status-divider" aria-hidden="true"></span>
-          <strong>Dados de exemplo</strong>
-        </div>
       </section>
 
+      <!-- A busca considera o estacionamento e a estrutura carregada pela API. -->
       <section class="search-panel" aria-label="Buscar estacionamento">
         <label class="search-field">
           <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -74,42 +69,34 @@
           <input
             id="parking-search"
             type="search"
-            placeholder="Busque por estacionamento, campus ou cidade"
+            placeholder="Busque por nome, endereço, piso ou setor"
             autocomplete="off"
-            aria-label="Buscar estacionamento por nome, campus ou cidade"
+            aria-label="Buscar estacionamento por nome, endereço, piso ou setor"
             list="parking-options"
           />
-          <datalist id="parking-options">
-            <option value="Estacionamento Estácio Natal"></option>
-            <option value="Natal, RN"></option>
-          </datalist>
+          <datalist id="parking-options"></datalist>
           <kbd>Ctrl K</kbd>
         </label>
         <div class="search-note" role="status" aria-live="polite">
           <span class="search-note-icon" aria-hidden="true">i</span>
           <span id="parking-search-message"
-            >Ex.: Estácio Natal ou Natal, RN</span
+            >Busque pelo nome, endereço, piso ou setor.</span
           >
         </div>
       </section>
 
-      <div
-        class="content-grid"
-        id="parking-content"
-        data-parking-search="Estacionamento Estácio Natal Campus Natal Natal RN"
-      >
-        <!-- MAPA -->
+      <div class="content-grid" id="parking-content">
+        <!-- O mapa exibe somente vagas; o motorista não altera sua configuração. -->
         <section class="map-card" aria-labelledby="map-title">
           <div class="map-card-header">
             <div>
               <p class="section-kicker">MAPA DO ESTACIONAMENTO</p>
               <h2 id="map-title">Escolha sua vaga</h2>
             </div>
-            <!-- PISO -->
             <label class="floor-select">
               <span>Piso</span>
               <select id="floor-select" aria-label="Selecionar piso" disabled>
-                <option value="">Carregando pisos...</option>
+                <option value="">Aguardando dados...</option>
               </select>
             </label>
           </div>
@@ -117,15 +104,14 @@
           <div class="map-controls">
             <div class="sector-picker" aria-label="Selecionar setor">
               <span class="control-label">Setor</span>
-              <div class="sector-options" id="sector-options">
-                <!-- Os setores serão adicionados pela API -->
-              </div>
+              <div class="sector-options" id="sector-options"></div>
             </div>
             <button
               class="accessibility-toggle"
               id="accessibility-toggle"
               type="button"
               aria-pressed="false"
+              aria-label="Exibir somente vagas acessíveis"
             >
               <span class="accessibility-icon" aria-hidden="true"
                 ><svg viewBox="0 0 24 24">
@@ -141,8 +127,8 @@
 
           <div class="map-legend" aria-label="Legenda">
             <span><i class="legend-dot legend-available"></i>Disponível</span>
-            <span><i class="legend-dot legend-selected"></i>Selecionada</span>
             <span><i class="legend-dot legend-occupied"></i>Ocupada</span>
+            <span><i class="legend-dot legend-maintenance"></i>Manutenção</span>
             <span
               ><i class="legend-accessible" aria-hidden="true"
                 ><svg viewBox="0 0 24 24">
@@ -155,13 +141,8 @@
           </div>
 
           <div class="parking-map" aria-label="Mapa de vagas">
-            <div class="parking-row" id="parking-row-top">
-              <!-- Vagas da primeira fileira serão adicionadas pelo JavaScript -->
-            </div>
-
-            <div class="parking-row parking-row-bottom" id="parking-row-bottom">
-              <!-- Vagas da segunda fileira serão adicionadas pelo JavaScript -->
-            </div>
+            <div class="parking-row" id="parking-row-top"></div>
+            <div class="parking-row parking-row-bottom" id="parking-row-bottom"></div>
           </div>
 
           <p
@@ -170,7 +151,7 @@
             role="status"
             aria-live="polite"
           >
-            Selecione uma vaga disponível no mapa.
+            Carregando as vagas do estacionamento...
           </p>
         </section>
 
@@ -181,7 +162,7 @@
           >
             <div class="availability-heading">
               <span class="availability-icon" aria-hidden="true">P</span>
-              <span class="availability-label">EXEMPLO DE DISPONIBILIDADE</span>
+              <span class="availability-label">DISPONIBILIDADE NO SETOR</span>
             </div>
             <h2 id="availability-title">
               Seu lugar está<br />esperando por você.
@@ -190,40 +171,15 @@
               Encontre uma vaga livre e aproveite melhor o seu tempo no campus.
             </p>
             <div class="availability-count">
-              <strong id="available-count">5</strong>
+              <strong id="available-count">0</strong>
               <span>vagas disponíveis<br />neste setor</span>
             </div>
             <div class="availability-meter" aria-hidden="true">
-              <span></span>
+              <span id="occupancy-meter"></span>
             </div>
-            <p class="meter-caption">Ocupação do setor <strong>38%</strong></p>
-          </section>
-
-          <section class="selection-card" aria-labelledby="selection-title">
-            <div class="selection-card-heading">
-              <span class="selection-pin" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
-                  <circle cx="12" cy="10" r="2.5" />
-                </svg>
-              </span>
-              <div>
-                <p class="section-kicker">SUA ESCOLHA</p>
-                <h2 id="selection-title">Nenhuma vaga selecionada</h2>
-              </div>
-            </div>
-            <p class="selection-description" id="selection-description">
-              Toque em uma vaga disponível no mapa para ver os detalhes.
+            <p class="meter-caption">
+              Ocupação do setor <strong id="occupancy-percent">0%</strong>
             </p>
-            <a
-              class="button button-primary"
-              href="../login/login.html"
-              id="continue-button"
-              aria-disabled="true"
-            >
-              Entrar para continuar <span aria-hidden="true">→</span>
-            </a>
-            <p class="selection-note">A seleção não reserva a vaga.</p>
           </section>
 
           <section class="help-card" id="como-funciona">

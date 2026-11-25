@@ -1,417 +1,405 @@
-// Prepara os controles locais da tela de configuração da estrutura.
-function mountStructurePage(root) {
-  // Localiza um elemento obrigatório ou informa claramente qual não foi encontrado.
-  function requireElement(selector) {
-    const element = root.querySelector(selector);
-    if (!element) {
+// Inicializa o editor da estrutura e mantém seu estado isolado nesta página.
+function iniciarPaginaEstrutura(raiz) {
+  function exigirElemento(seletor) {
+    const elemento = raiz.querySelector(seletor);
+    if (!elemento) {
       throw new Error(
-        `Elemento obrigatório não encontrado na página de estrutura: ${selector}`,
+        `Elemento obrigatório não encontrado na página de estrutura: ${seletor}`,
       );
     }
-    return element;
+    return elemento;
   }
 
-  const elements = {
-    structureContent: requireElement("[data-structure-content]"),
-    structureForm: requireElement("#structure-form"),
-    structureName: requireElement("#structure-name"),
-    structureAddress: requireElement("#structure-address"),
-    floorCount: requireElement("#floor-count"),
-    floorTabs: requireElement("#floor-tabs"),
-    floorName: requireElement("#floor-name"),
-    sectorId: requireElement("#sector-id"),
-    sectorSpotCount: requireElement("#sector-spot-count"),
-    addSectorButton: requireElement("#add-sector-button"),
-    sectorsList: requireElement("#sectors-list"),
-    floorCounter: requireElement("#floor-counter"),
-    cancelStructureButton: requireElement("#cancel-structure"),
-    structureMessage: requireElement("#structure-message"),
+  const elementos = {
+    conteudoEstrutura: exigirElemento("[data-structure-content]"),
+    formularioEstrutura: exigirElemento("#structure-form"),
+    nomeEstrutura: exigirElemento("#structure-name"),
+    enderecoEstrutura: exigirElemento("#structure-address"),
+    quantidadePisos: exigirElemento("#floor-count"),
+    abasPisos: exigirElemento("#floor-tabs"),
+    nomePiso: exigirElemento("#floor-name"),
+    identificadorSetor: exigirElemento("#sector-id"),
+    quantidadeVagasSetor: exigirElemento("#sector-spot-count"),
+    botaoAdicionarSetor: exigirElemento("#add-sector-button"),
+    listaSetores: exigirElemento("#sectors-list"),
+    contadorPisos: exigirElemento("#floor-counter"),
+    botaoCancelarEstrutura: exigirElemento("#cancel-structure"),
+    mensagemEstrutura: exigirElemento("#structure-message"),
   };
 
-  const MAX_FLOORS = 20;
-  const MAX_SPOTS_PER_SECTOR = 999;
+  const MAXIMO_PISOS = 20;
+  const MAXIMO_VAGAS_POR_SETOR = 999;
 
-  // Cria um piso com um nome inicial e sem setores.
-  function createFloor(index) {
+  function criarPiso(indice) {
     return {
-      identificador: `Piso ${index + 1}`,
+      identificador: `Piso ${indice + 1}`,
       setores: [],
     };
   }
 
-  let floors = [createFloor(0)];
-  let activeFloorIndex = 0;
-  let structureName = "";
-  let structureAddress = "";
+  let pisos = [criarPiso(0)];
+  let indicePisoAtivo = 0;
+  let nomeEstacionamento = "";
+  let enderecoEstacionamento = "";
 
-  // Exibe uma mensagem de validação ou informa que o salvamento ainda não existe.
-  function showStructureMessage(message, state = "error") {
-    elements.structureMessage.textContent = message;
-    elements.structureMessage.dataset.state = state;
-    elements.structureMessage.hidden = false;
+  function mostrarMensagemEstrutura(mensagem, estado = "error") {
+    elementos.mensagemEstrutura.textContent = mensagem;
+    elementos.mensagemEstrutura.dataset.state = estado;
+    elementos.mensagemEstrutura.hidden = false;
   }
 
-  // Oculta a mensagem atual quando o usuário volta a editar os campos.
-  function clearStructureMessage() {
-    elements.structureMessage.textContent = "";
-    elements.structureMessage.hidden = true;
-    delete elements.structureMessage.dataset.state;
+  function limparMensagemEstrutura() {
+    elementos.mensagemEstrutura.textContent = "";
+    elementos.mensagemEstrutura.hidden = true;
+    delete elementos.mensagemEstrutura.dataset.state;
   }
 
-  // Cria um elemento HTML usando texto simples.
-  function createTextElement(tagName, className, text) {
-    const element = document.createElement(tagName);
-    element.className = className;
-    element.textContent = text;
-    return element;
+  function criarElementoTexto(tag, classe, texto) {
+    const elemento = document.createElement(tag);
+    elemento.className = classe;
+    elemento.textContent = texto;
+    return elemento;
   }
 
-  // Retorna o piso selecionado no editor.
-  function getActiveFloor() {
-    return floors[activeFloorIndex];
+  function obterPisoAtivo() {
+    return pisos[indicePisoAtivo];
   }
 
-  // Atualiza as opções de pisos e o contador.
-  function renderFloorTabs() {
-    elements.floorTabs.replaceChildren();
+  // Atualiza as abas e o contador a partir do estado atual dos pisos.
+  function renderizarAbasPisos() {
+    elementos.abasPisos.replaceChildren();
 
-    floors.forEach((floor, index) => {
-      const button = document.createElement("button");
-      button.className = "floor-tab";
-      button.type = "button";
-      button.dataset.floorIndex = String(index);
-      button.setAttribute("aria-pressed", String(index === activeFloorIndex));
-      button.append(
-        createTextElement(
+    pisos.forEach((piso, indice) => {
+      const botao = document.createElement("button");
+      botao.className = "floor-tab";
+      botao.type = "button";
+      botao.dataset.floorIndex = String(indice);
+      botao.setAttribute("aria-pressed", String(indice === indicePisoAtivo));
+      botao.append(
+        criarElementoTexto(
           "span",
           "floor-tab-number",
-          String(index + 1).padStart(2, "0"),
+          String(indice + 1).padStart(2, "0"),
         ),
-        createTextElement(
+        criarElementoTexto(
           "span",
           "floor-tab-name",
-          floor.identificador || `Piso ${index + 1}`,
+          piso.identificador || `Piso ${indice + 1}`,
         ),
-        createTextElement(
+        criarElementoTexto(
           "span",
           "floor-tab-count",
-          String(floor.setores.length),
+          String(piso.setores.length),
         ),
       );
-      elements.floorTabs.append(button);
+      elementos.abasPisos.append(botao);
     });
 
-    elements.floorCounter.textContent = `${floors.length} ${
-      floors.length === 1 ? "piso" : "pisos"
+    elementos.contadorPisos.textContent = `${pisos.length} ${
+      pisos.length === 1 ? "piso" : "pisos"
     }`;
   }
 
-  // Cria o cartão de um setor com identificador, quantidade e opção de remoção.
-  function createSectorCard(sector, sectorIndex) {
-    const card = document.createElement("article");
-    card.className = "sector-card";
+  function criarCartaoSetor(setor, indiceSetor) {
+    const cartao = document.createElement("article");
+    cartao.className = "sector-card";
 
-    const content = document.createElement("div");
-    content.className = "sector-card-content";
+    const conteudo = document.createElement("div");
+    conteudo.className = "sector-card-content";
 
-    const title = document.createElement("div");
-    title.className = "sector-card-title";
-    title.append(
-      createTextElement("strong", "", `Setor ${sector.identificador}`),
-      createTextElement(
+    const titulo = document.createElement("div");
+    titulo.className = "sector-card-title";
+    titulo.append(
+      criarElementoTexto("strong", "", `Setor ${setor.identificador}`),
+      criarElementoTexto(
         "span",
         "",
-        `${sector.quantidadeVaga} ${sector.quantidadeVaga === 1 ? "vaga" : "vagas"}`,
+        `${setor.quantidadeVaga} ${setor.quantidadeVaga === 1 ? "vaga" : "vagas"}`,
       ),
     );
-    content.append(title);
+    conteudo.append(titulo);
 
-    const removeButton = document.createElement("button");
-    removeButton.className = "remove-sector-button";
-    removeButton.type = "button";
-    removeButton.dataset.removeSector = String(sectorIndex);
-    removeButton.setAttribute("aria-label", `Remover setor ${sector.id}`);
-    removeButton.textContent = "×";
+    const botaoRemover = document.createElement("button");
+    botaoRemover.className = "remove-sector-button";
+    botaoRemover.type = "button";
+    botaoRemover.dataset.removeSector = String(indiceSetor);
+    botaoRemover.setAttribute(
+      "aria-label",
+      `Remover setor ${setor.identificador}`,
+    );
+    botaoRemover.textContent = "×";
 
-    card.append(content, removeButton);
-    return card;
+    cartao.append(conteudo, botaoRemover);
+    return cartao;
   }
 
-  // Renderiza os setores cadastrados no piso ativo ou o estado vazio.
-  function renderSectors() {
-    const sectors = getActiveFloor().setores;
-    elements.sectorsList.replaceChildren();
+  function renderizarSetores() {
+    const setores = obterPisoAtivo().setores;
+    elementos.listaSetores.replaceChildren();
 
-    if (sectors.length === 0) {
-      const emptyState = document.createElement("div");
-      emptyState.className = "empty-sectors";
-      const icon = createTextElement("span", "empty-sectors-icon", "+");
-      icon.setAttribute("aria-hidden", "true");
-      const copy = document.createElement("span");
-      copy.append(
-        createTextElement("strong", "", "Nenhum setor neste piso"),
-        createTextElement(
+    if (setores.length === 0) {
+      const estadoVazio = document.createElement("div");
+      estadoVazio.className = "empty-sectors";
+      const icone = criarElementoTexto("span", "empty-sectors-icon", "+");
+      icone.setAttribute("aria-hidden", "true");
+      const texto = document.createElement("span");
+      texto.append(
+        criarElementoTexto("strong", "", "Nenhum setor neste piso"),
+        criarElementoTexto(
           "small",
           "",
           "Adicione o primeiro setor para começar a distribuir as vagas.",
         ),
       );
-      emptyState.append(icon, copy);
-      elements.sectorsList.append(emptyState);
+      estadoVazio.append(icone, texto);
+      elementos.listaSetores.append(estadoVazio);
       return;
     }
 
-    sectors.forEach((sector, index) => {
-      elements.sectorsList.append(createSectorCard(sector, index));
+    setores.forEach((setor, indice) => {
+      elementos.listaSetores.append(criarCartaoSetor(setor, indice));
     });
   }
 
-  // Sincroniza os campos e redesenha os pisos e setores.
-  function renderEditor() {
-    elements.structureName.value = structureName;
-    elements.structureAddress.value = structureAddress;
-    elements.floorCount.value = String(floors.length);
-    elements.floorName.value = getActiveFloor().identificador;
-    renderFloorTabs();
-    renderSectors();
+  function renderizarEditor() {
+    elementos.nomeEstrutura.value = nomeEstacionamento;
+    elementos.enderecoEstrutura.value = enderecoEstacionamento;
+    elementos.quantidadePisos.value = String(pisos.length);
+    elementos.nomePiso.value = obterPisoAtivo().identificador;
+    renderizarAbasPisos();
+    renderizarSetores();
   }
 
-  // Seleciona o piso e atualiza os dados exibidos.
-  function setActiveFloor(index) {
-    if (!Number.isInteger(index) || !floors[index]) {
+  function definirPisoAtivo(indice) {
+    if (!Number.isInteger(indice) || !pisos[indice]) {
       return;
     }
 
-    activeFloorIndex = index;
-    elements.floorName.value = getActiveFloor().identificador;
-    renderFloorTabs();
-    renderSectors();
-    clearStructureMessage();
+    indicePisoAtivo = indice;
+    elementos.nomePiso.value = obterPisoAtivo().identificador;
+    renderizarAbasPisos();
+    renderizarSetores();
+    limparMensagemEstrutura();
   }
 
-  // Ajusta a quantidade de pisos e confirma antes de descartar setores.
-  function resizeFloors() {
-    const nextCount = Number(elements.floorCount.value);
-    const previousCount = floors.length;
+  // Confirma antes de descartar setores quando a quantidade de pisos diminui.
+  function ajustarQuantidadePisos() {
+    const novaQuantidade = Number(elementos.quantidadePisos.value);
+    const quantidadeAnterior = pisos.length;
 
     if (
-      !Number.isInteger(nextCount) ||
-      nextCount < 1 ||
-      nextCount > MAX_FLOORS
+      !Number.isInteger(novaQuantidade) ||
+      novaQuantidade < 1 ||
+      novaQuantidade > MAXIMO_PISOS
     ) {
-      showStructureMessage(
-        `Informe uma quantidade entre 1 e ${MAX_FLOORS} pisos.`,
+      mostrarMensagemEstrutura(
+        `Informe uma quantidade entre 1 e ${MAXIMO_PISOS} pisos.`,
       );
-      elements.floorCount.value = String(previousCount);
+      elementos.quantidadePisos.value = String(quantidadeAnterior);
       return;
     }
 
-    const removedFloors = floors.slice(nextCount);
-    const hasConfiguration = removedFloors.some(
-      (floor) => floor.setores.length > 0,
+    const pisosRemovidos = pisos.slice(novaQuantidade);
+    const possuiSetores = pisosRemovidos.some(
+      (piso) => piso.setores.length > 0,
     );
     if (
-      nextCount < previousCount &&
-      hasConfiguration &&
+      novaQuantidade < quantidadeAnterior &&
+      possuiSetores &&
       !window.confirm(
         "Os pisos removidos e seus setores serão descartados. Deseja continuar?",
       )
     ) {
-      elements.floorCount.value = String(previousCount);
+      elementos.quantidadePisos.value = String(quantidadeAnterior);
       return;
     }
 
-    while (floors.length < nextCount) {
-      floors.push(createFloor(floors.length));
+    while (pisos.length < novaQuantidade) {
+      pisos.push(criarPiso(pisos.length));
     }
-    floors.length = nextCount;
-    activeFloorIndex = Math.min(activeFloorIndex, nextCount - 1);
-    renderEditor();
-    clearStructureMessage();
+    pisos.length = novaQuantidade;
+    indicePisoAtivo = Math.min(indicePisoAtivo, novaQuantidade - 1);
+    renderizarEditor();
+    limparMensagemEstrutura();
   }
 
-  // Valida e adiciona o setor ao piso selecionado.
-  function addSector() {
-    const floor = getActiveFloor();
-    const sectorId = elements.sectorId.value.trim().toUpperCase();
-    const spotCount = Number(elements.sectorSpotCount.value);
+  function adicionarSetor() {
+    const piso = obterPisoAtivo();
+    const identificador = elementos.identificadorSetor.value.trim().toUpperCase();
+    const quantidadeVagas = Number(elementos.quantidadeVagasSetor.value);
 
-    elements.sectorId.setCustomValidity("");
-    elements.sectorSpotCount.setCustomValidity("");
+    elementos.identificadorSetor.setCustomValidity("");
+    elementos.quantidadeVagasSetor.setCustomValidity("");
 
-    if (!/^[A-Z0-9]{1,6}$/.test(sectorId)) {
-      elements.sectorId.setCustomValidity(
+    if (!/^[A-Z0-9]{1,6}$/.test(identificador)) {
+      elementos.identificadorSetor.setCustomValidity(
         "Use de 1 a 6 letras ou números, sem espaços.",
       );
-      elements.sectorId.reportValidity();
+      elementos.identificadorSetor.reportValidity();
       return;
     }
 
     if (
-      !Number.isInteger(spotCount) ||
-      spotCount < 1 ||
-      spotCount > MAX_SPOTS_PER_SECTOR
+      !Number.isInteger(quantidadeVagas) ||
+      quantidadeVagas < 1 ||
+      quantidadeVagas > MAXIMO_VAGAS_POR_SETOR
     ) {
-      elements.sectorSpotCount.setCustomValidity(
-        `Informe uma quantidade entre 1 e ${MAX_SPOTS_PER_SECTOR} vagas.`,
+      elementos.quantidadeVagasSetor.setCustomValidity(
+        `Informe uma quantidade entre 1 e ${MAXIMO_VAGAS_POR_SETOR} vagas.`,
       );
-      elements.sectorSpotCount.reportValidity();
+      elementos.quantidadeVagasSetor.reportValidity();
       return;
     }
 
-    if (floor.setores.some((sector) => sector.identificador === sectorId)) {
-      elements.sectorId.setCustomValidity(
+    if (piso.setores.some((setor) => setor.identificador === identificador)) {
+      elementos.identificadorSetor.setCustomValidity(
         "Este identificador já está cadastrado neste piso.",
       );
 
-      elements.sectorId.reportValidity();
+      elementos.identificadorSetor.reportValidity();
       return;
     }
 
-    floor.setores.push({
-      identificador: sectorId,
-      quantidadeVaga: spotCount,
+    piso.setores.push({
+      identificador,
+      quantidadeVaga: quantidadeVagas,
     });
-    elements.sectorId.value = "";
-    elements.sectorSpotCount.value = "12";
-    renderFloorTabs();
-    renderSectors();
-    clearStructureMessage();
+    elementos.identificadorSetor.value = "";
+    elementos.quantidadeVagasSetor.value = "12";
+    renderizarAbasPisos();
+    renderizarSetores();
+    limparMensagemEstrutura();
   }
 
-  // Descarta as alterações da prévia e restaura um piso vazio.
-  function cancelChanges() {
-    floors = [createFloor(0)];
-    activeFloorIndex = 0;
-    structureName = "";
-    structureAddress = "";
-    elements.sectorId.value = "";
-    elements.sectorSpotCount.value = "12";
-    elements.floorName.setCustomValidity("");
-    elements.sectorId.setCustomValidity("");
-    elements.sectorSpotCount.setCustomValidity("");
-    renderEditor();
-    showStructureMessage("Alterações descartadas nesta prévia.", "info");
+  function reiniciarEditor() {
+    pisos = [criarPiso(0)];
+    indicePisoAtivo = 0;
+    nomeEstacionamento = "";
+    enderecoEstacionamento = "";
+    elementos.identificadorSetor.value = "";
+    elementos.quantidadeVagasSetor.value = "12";
+    elementos.nomePiso.setCustomValidity("");
+    elementos.identificadorSetor.setCustomValidity("");
+    elementos.quantidadeVagasSetor.setCustomValidity("");
+    renderizarEditor();
   }
 
-  // Evento do envio do formulário + FETCH
-  function handleSubmit(event) {
-    event.preventDefault();
-    elements.structureName.value = elements.structureName.value.trim();
-    elements.structureAddress.value = elements.structureAddress.value.trim();
-    elements.floorName.value = elements.floorName.value.trim();
+  function cancelarAlteracoes() {
+    reiniciarEditor();
+    mostrarMensagemEstrutura("Alterações descartadas nesta prévia.", "info");
+  }
 
-    const nomeEstacionamento = elements.structureName.value;
-    const enderecoEstacionamento = elements.structureAddress.value;
-    const pisosEstacionamento = floors;
+  // Valida o modelo completo antes de enviá-lo à API.
+  async function enviarFormulario(evento) {
+    evento.preventDefault();
+    elementos.nomeEstrutura.value = elementos.nomeEstrutura.value.trim();
+    elementos.enderecoEstrutura.value = elementos.enderecoEstrutura.value.trim();
+    elementos.nomePiso.value = elementos.nomePiso.value.trim();
 
-    getActiveFloor().identificador = elements.floorName.value;
+    if (!elementos.formularioEstrutura.reportValidity()) {
+      return;
+    }
+
+    const indicePisoSemNome = pisos.findIndex(
+      (piso) => !piso.identificador.trim(),
+    );
+    if (indicePisoSemNome !== -1) {
+      definirPisoAtivo(indicePisoSemNome);
+      elementos.nomePiso.setCustomValidity("Informe um nome para este piso.");
+      elementos.nomePiso.reportValidity();
+      return;
+    }
 
     const novoEstacionamento = {
-      nome: nomeEstacionamento,
-      endereco: enderecoEstacionamento,
-      pisos: pisosEstacionamento,
+      nome: elementos.nomeEstrutura.value,
+      endereco: elementos.enderecoEstrutura.value,
+      pisos,
     };
 
-    if (!elements.structureForm.reportValidity()) {
-      return;
-    }
+    obterPisoAtivo().identificador = elementos.nomePiso.value;
+    try {
+      const resposta = await fetch(
+        "http://localhost:8080/estacioNatal/estacionamentos",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(novoEstacionamento),
+        },
+      );
+      if (!resposta.ok) {
+        throw new Error("Não foi possível cadastrar o estacionamento.");
+      }
 
-    const unnamedFloorIndex = floors.findIndex(
-      (floor) => !floor.identificador.trim(),
-    );
-    if (unnamedFloorIndex !== -1) {
-      setActiveFloor(unnamedFloorIndex);
-      elements.floorName.setCustomValidity("Informe um nome para este piso.");
-      elements.floorName.reportValidity();
-      return;
-    }
-
-    console.log(novoEstacionamento);
-
-    renderFloorTabs();
-
-    fetch("http://localhost:8080/estacioNatal/estacionamentos", {
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify(novoEstacionamento),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Não foi possível cadastrar o estacionamento");
-        }
-
-        return response.text();
-      })
-      .then((dados) => {
-        console.log("ESTACIONAMENTO CADASTRADO COM SUCESSO!");
-
-        elements.structureForm.reset();
-      })
-      .catch((erro) => {
-        console.error("Erro ao cadastrar:", erro);
-        alert(erro.message);
-      });
-  }
-
-  // Trata cliques nos controles dinâmicos de pisos e setores.
-  function handleStructureClick(event) {
-    if (!(event.target instanceof Element)) {
-      return;
-    }
-
-    const floorButton = event.target.closest("[data-floor-index]");
-    if (floorButton && elements.floorTabs.contains(floorButton)) {
-      setActiveFloor(Number(floorButton.dataset.floorIndex));
-      return;
-    }
-
-    const removeButton = event.target.closest("[data-remove-sector]");
-    if (removeButton && elements.sectorsList.contains(removeButton)) {
-      const sectorIndex = Number(removeButton.dataset.removeSector);
-      getActiveFloor().setores.splice(sectorIndex, 1);
-      renderFloorTabs();
-      renderSectors();
-      clearStructureMessage();
+      elementos.formularioEstrutura.reset();
+      reiniciarEditor();
+      mostrarMensagemEstrutura("Estacionamento cadastrado com sucesso.", "success");
+    } catch (erro) {
+      console.error("Erro ao cadastrar estacionamento:", erro);
+      mostrarMensagemEstrutura(
+        erro.message || "Não foi possível cadastrar o estacionamento.",
+      );
     }
   }
 
-  elements.floorCount.addEventListener("change", resizeFloors);
-  elements.floorName.addEventListener("input", () => {
-    elements.floorName.setCustomValidity("");
-    getActiveFloor().identificador = elements.floorName.value;
-    const tabName = elements.floorTabs.querySelector(
-      `[data-floor-index="${activeFloorIndex}"] .floor-tab-name`,
-    );
-    if (tabName) {
-      tabName.textContent =
-        elements.floorName.value || `Piso ${activeFloorIndex + 1}`;
+  function tratarCliqueNaEstrutura(evento) {
+    if (!(evento.target instanceof Element)) {
+      return;
     }
-    clearStructureMessage();
+
+    const botaoPiso = evento.target.closest("[data-floor-index]");
+    if (botaoPiso && elementos.abasPisos.contains(botaoPiso)) {
+      definirPisoAtivo(Number(botaoPiso.dataset.floorIndex));
+      return;
+    }
+
+    const botaoRemover = evento.target.closest("[data-remove-sector]");
+    if (botaoRemover && elementos.listaSetores.contains(botaoRemover)) {
+      const indiceSetor = Number(botaoRemover.dataset.removeSector);
+      obterPisoAtivo().setores.splice(indiceSetor, 1);
+      renderizarAbasPisos();
+      renderizarSetores();
+      limparMensagemEstrutura();
+    }
+  }
+
+  elementos.quantidadePisos.addEventListener("change", ajustarQuantidadePisos);
+  elementos.nomePiso.addEventListener("input", () => {
+    elementos.nomePiso.setCustomValidity("");
+    obterPisoAtivo().identificador = elementos.nomePiso.value;
+    const nomeAba = elementos.abasPisos.querySelector(
+      `[data-floor-index="${indicePisoAtivo}"] .floor-tab-name`,
+    );
+    if (nomeAba) {
+      nomeAba.textContent =
+        elementos.nomePiso.value || `Piso ${indicePisoAtivo + 1}`;
+    }
+    limparMensagemEstrutura();
   });
-  elements.structureName.addEventListener("input", () => {
-    structureName = elements.structureName.value;
-    clearStructureMessage();
+  elementos.nomeEstrutura.addEventListener("input", () => {
+    nomeEstacionamento = elementos.nomeEstrutura.value;
+    limparMensagemEstrutura();
   });
-  elements.structureAddress.addEventListener("input", () => {
-    structureAddress = elements.structureAddress.value;
-    clearStructureMessage();
+  elementos.enderecoEstrutura.addEventListener("input", () => {
+    enderecoEstacionamento = elementos.enderecoEstrutura.value;
+    limparMensagemEstrutura();
   });
-  elements.sectorId.addEventListener("input", () => {
-    elements.sectorId.setCustomValidity("");
+  elementos.identificadorSetor.addEventListener("input", () => {
+    elementos.identificadorSetor.setCustomValidity("");
   });
-  elements.sectorSpotCount.addEventListener("input", () => {
-    elements.sectorSpotCount.setCustomValidity("");
+  elementos.quantidadeVagasSetor.addEventListener("input", () => {
+    elementos.quantidadeVagasSetor.setCustomValidity("");
   });
-  elements.addSectorButton.addEventListener("click", addSector);
-  elements.structureForm.addEventListener("submit", handleSubmit);
-  elements.cancelStructureButton.addEventListener("click", cancelChanges);
-  elements.structureContent.addEventListener("click", handleStructureClick);
-  renderEditor();
+  elementos.botaoAdicionarSetor.addEventListener("click", adicionarSetor);
+  elementos.formularioEstrutura.addEventListener("submit", enviarFormulario);
+  elementos.botaoCancelarEstrutura.addEventListener(
+    "click",
+    cancelarAlteracoes,
+  );
+  elementos.conteudoEstrutura.addEventListener(
+    "click",
+    tratarCliqueNaEstrutura,
+  );
+  renderizarEditor();
 }
 
-mountStructurePage(document);
+iniciarPaginaEstrutura(document);

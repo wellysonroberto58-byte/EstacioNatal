@@ -72,15 +72,11 @@ input {
 }
 
 .brand-mark {
-  display: grid;
+  display: block;
   width: 34px;
   height: 34px;
-  place-items: center;
-  border-radius: 10px;
-  background: var(--red);
-  color: var(--page-background);
-  font-size: 18px;
-  font-weight: 800;
+  flex: 0 0 auto;
+  object-fit: contain;
 }
 
 .brand-accent {
