@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gerenciamento de usuários | Estácio Natal</title>
   <link rel="stylesheet" href="style/gerencia.css" />
+  <link rel="stylesheet" href="style/usuarios.css" />
 </head>
 
 <body>
@@ -72,16 +73,54 @@
       </div>
     </aside>
     <main class="main-content">
+
       <section class="view-panel">
-        <div class="section-placeholder">
-          <p>Usuários cadastrados</p>
-          <div class="painei-usuarios"></div>
+        <div class="usuarios-container">
+
+          <div class="usuarios-header">
+            <div>
+              <p class="section-eyebrow">ADMINISTRAÇÃO</p>
+              <h2>Motoristas cadastrados</h2>
+              <p>Consulte os motoristas registrados no EstacioNatal.</p>
+            </div>
+
+            <div class="usuarios-total">
+              <span>Total de motoristas</span>
+              <strong id="total-motoristas">0</strong>
+            </div>
+          </div>
+
+          <div class="usuarios-toolbar">
+            <input type="search" id="pesquisa-motorista" placeholder="Pesquisar por nome, e-mail ou placa..." />
+          </div>
+
+          <div class="usuarios-tabela-container">
+            <table class="usuarios-tabela">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Placa</th>
+                </tr>
+              </thead>
+
+              <tbody id="lista-motoristas">
+                <!-- Os motoristas serão inseridos pelo JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <p id="mensagem-usuarios"></p>
+
         </div>
       </section>
+
       <footer class="main-footer"><span>Estácio Natal <span aria-hidden="true">·</span> Painel
           administrativo</span><span>Ambiente demonstrativo</span></footer>
     </main>
   </div>
+  <script src="script/usuario.js"></script>
 </body>
 
 </html>
