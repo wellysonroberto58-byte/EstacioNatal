@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login Administrador | EstacioNatal</title>
+
+    <link rel="stylesheet" href="./styles/admin.css">
+</head>
+
+<body>
+
+    <main class="admin-container">
+        <section class="admin-card">
+            <div class="admin-header">
+                <h1>Estacio<span>Natal</span></h1>
+
+                <p>Área administrativa</p>
+            </div>
+            <div class="admin-form-container">
+                <h2>Bem-vindo de volta!</h2>
+                <p class="form-description">
+                    Entre com suas credenciais para acessar o painel administrativo.
+                </p>
+                <form id="login-admin-form">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+
+                        <input type="email" id="email" placeholder="Digite seu e-mail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+
+                        <input type="password" id="senha" placeholder="Digite sua senha" required>
+                    </div>
+                    <button type="submit" id="login-button">
+                        Entrar
+                    </button>
+                    <p id="login-message"></p>
+                </form>
+                <div class="admin-footer">
+                    <p>
+                        Ainda não possui uma conta?
+                        <a href="../cadastroAdministrador/cadastro-admin.html">Cadastre-se</a>
+                    </p>
+
+                    <a href="../index.html" class="back-link">
+                        Voltar para a página inicial
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="./scripts/admin-login.js"></script>
+</body>
+
+</html>
