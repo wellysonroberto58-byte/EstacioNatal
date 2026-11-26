@@ -40,6 +40,6 @@ loginForm.addEventListener("submit", async (event) => {
 
     } catch (erro) {
         console.error("Erro:", erro);
-        loginMessage.textContent = "Não foi possível conectar ao servidor.";
+        loginMessage.textContent = "Email ou senha incorretas.";
     }
 });
