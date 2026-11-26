@@ -7,22 +7,23 @@ import com.sun.net.httpserver.HttpServer;
 
 import controller.MotoristaController;
 import controller.VagaController;
+import controller.AdministradorController;
 import controller.EstacionamentoController;
 
 public class Servidor {
 
     private HttpServer servidor;
 
-    public Servidor(VagaController vagaController, MotoristaController motoristaController, EstacionamentoController estacionamentoController) throws IOException {
+    public Servidor(VagaController vagaController, MotoristaController motoristaController, EstacionamentoController estacionamentoController, AdministradorController AdministradorController) throws IOException {
 
         servidor = HttpServer.create(
             new InetSocketAddress(8080), 0
         );
 
-
         vagaController.registrarRotas(servidor);
         motoristaController.registrarRotas(servidor);
         estacionamentoController.registrarRotas(servidor);
+        AdministradorController.registrarRotas(servidor);
 
         System.out.println("--------------------------------");
         System.out.println("       ESTACIONATAL API");
