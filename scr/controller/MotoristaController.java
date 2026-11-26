@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import model.Login;
 import model.Motorista;
 import service.MotoristaService;
 
@@ -51,28 +52,16 @@ public class MotoristaController {
 
         servidor.createContext("/estacioNatal/login/motorista", exchange -> {
 
-            exchange.getResponseHeaders().set(
-                "Access-Control-Allow-Origin", "*"
-            );
-
-            exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "POST, OPTIONS");
-
-            exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
-
-            if (exchange.getRequestMethod().equals("OPTIONS")){
-                exchange.sendResponseHeaders(204, -1);
-                exchange.close();
-                return;
-            }
-
+            
             String metodo = exchange.getRequestMethod();
+            configurarCors(exchange, metodo);
 
             if (metodo.equals("POST")){
                 String conteudo = lerCorpo(exchange);
 
-                Motorista loginMotorista = gson.fromJson(conteudo, Motorista.class);
+                Login loginMotorista = gson.fromJson(conteudo, Login.class);
 
-                Motorista motorista = autenticar(loginMotorista.getEmail(), loginMotorista.getSenhaHash());
+                Motorista motorista = service.autenticar(loginMotorista.getEmail(), loginMotorista.getSenha());
 
                 if (motorista != null){
                     enviarResposta(exchange, 200, "Login realizado com sucesso!");
