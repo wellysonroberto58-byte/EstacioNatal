@@ -1,5 +1,12 @@
 package controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import model.TipoVaga;
+import strategy.BuscarPorStatus;
+import strategy.BuscarPorTipo;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,10 +70,50 @@ public class VagaController {
 
             configurarCors(exchange, metodo);
 
-            if (metodo.equals("GET")){
-                List<Vaga> vagas = service.listarVagas();
+            if (metodo.equals("GET")) {
 
-                enviarResposta(exchange, 200, gson.toJson(vagas));
+                try {
+                    Map<String, String> parametros = obterParametros(exchange);
+
+                    List<Vaga> vagas;
+
+                    if (parametros.containsKey("status")) {
+
+                        StatusVaga status = StatusVaga.valueOf(
+                            parametros.get("status")
+                        );
+
+                        vagas = service.buscarVagas(
+                            new BuscarPorStatus(status)
+                        );
+
+                    } else if (parametros.containsKey("tipo")) {
+
+                        TipoVaga tipo = TipoVaga.valueOf(
+                            parametros.get("tipo")
+                        );
+
+                        vagas = service.buscarVagas(
+                            new BuscarPorTipo(tipo)
+                        );
+
+                    } else {
+
+                        vagas = service.listarVagas();
+
+                    }
+
+                    enviarResposta(exchange, 200, gson.toJson(vagas));
+
+                } catch (IllegalArgumentException e) {
+
+                    enviarResposta(
+                        exchange,
+                        400,
+                        gson.toJson("Filtro inválido: " + e.getMessage())
+                    );
+
+                }
             }
 
             else if(metodo.equals("POST")){
@@ -122,6 +169,29 @@ public class VagaController {
             buffer.write(dados, 0, quantidade);
         }
         return buffer.toString(StandardCharsets.UTF_8);
+    }
+
+    private Map<String, String> obterParametros(HttpExchange exchange) {
+
+        Map<String, String> parametros = new HashMap<>();
+
+        String query = exchange.getRequestURI().getRawQuery();
+
+        if (query != null) {
+
+            String[] partes = query.split("&");
+
+            for (String parte : partes) {
+
+                String[] chaveValor = parte.split("=", 2);
+
+                if (chaveValor.length == 2) {
+                    parametros.put(chaveValor[0], chaveValor[1]);
+                }
+            }
+        }
+
+        return parametros;
     }
 
     private void enviarResposta(HttpExchange exchange, int status, String resposta) throws IOException {
