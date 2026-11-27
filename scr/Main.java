@@ -2,6 +2,7 @@ import controller.AdministradorController;
 import controller.EstacionamentoController;
 import controller.MotoristaController;
 import controller.VagaController;
+import facade.EstacionamentoFacade;
 import model.Administrador;
 import repository.EstacionamentoMemory;
 import repository.IAdministrador;
@@ -22,20 +23,23 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        
         //VAGAS
         IVaga repoVaga = new IVagaMemory();
         VagaService vagaService = new VagaService(repoVaga);
         VagaController vagaController = new VagaController(vagaService);
-
+        
         //MOTORISTAS
         IMotorista repoMotorista = new IMotoristaMemory();
         MotoristaService motoristaService = new MotoristaService(repoMotorista);
         MotoristaController motoristaController = new MotoristaController(motoristaService);
-
+        
         //Estacionamentos
         IEstacionamento repoEstacionamento = new EstacionamentoMemory();
-        EstacionamentoService estacionamentoService = new EstacionamentoService(repoEstacionamento, repoVaga);
-        EstacionamentoController estacionamentoController = new EstacionamentoController(estacionamentoService);
+        EstacionamentoService estacionamentoService = new EstacionamentoService(repoEstacionamento);
+        //Facade
+        EstacionamentoFacade estacionamentoFacade = new EstacionamentoFacade(estacionamentoService, vagaService);
+        EstacionamentoController estacionamentoController = new EstacionamentoController(estacionamentoFacade);
 
         //Administradores
         IAdministrador repoAdministrador = new IAdministradorMemory();

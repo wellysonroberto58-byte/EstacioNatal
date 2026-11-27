@@ -10,24 +10,24 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import facade.EstacionamentoFacade;
 import model.Estacionamento;
 import service.EstacionamentoService;
 
 public class EstacionamentoController {
 
+    private EstacionamentoFacade facade;
 
-    private EstacionamentoService service;
-
-    public EstacionamentoController(EstacionamentoService service){
-        this.service = service;
+    public EstacionamentoController(EstacionamentoFacade facade) {
+        this.facade = facade;
     }
 
     public void salvarEstacionamento(Estacionamento estacionamento){
-        service.salvar(estacionamento);
+        facade.configurarEstacionamento(estacionamento);
     }
 
     public Estacionamento buscarPorId(int id) {
-        return service.buscarPorId(id);
+        return facade.buscarPorId(id);
     }
 
     Gson gson = new Gson();
@@ -53,7 +53,8 @@ public class EstacionamentoController {
 
                 enviarResposta(exchange, 200, "Estacionamento Cadastrado com sucesso!");
             }
-            if (metodo.equals("GET")){
+             
+            else if (metodo.equals("GET")){
                 String caminho = exchange.getRequestURI().getPath();
 
                 String idTexto = caminho.substring("/estacioNatal/estacionamentos/".length());

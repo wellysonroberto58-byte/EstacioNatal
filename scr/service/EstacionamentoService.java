@@ -1,74 +1,40 @@
+
 package service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import model.Estacionamento;
-import model.Piso;
-import model.Setor;
-import model.StatusVaga;
-import model.Vaga;
 import repository.IEstacionamento;
-import repository.IVaga;
 
 public class EstacionamentoService {
 
     private IEstacionamento repository;
-    private IVaga vagaRepository;
 
-    public EstacionamentoService (IEstacionamento repository, IVaga vagaRepository){
+    public EstacionamentoService(IEstacionamento repository) {
         this.repository = repository;
-        this.vagaRepository = vagaRepository;
     }
 
-    public Estacionamento buscarPorId(int id){
+    public Estacionamento buscarPorId(int id) {
         return repository.procurarPorId(id);
     }
+    
+    public void validarCadastro(Estacionamento estacionamento) {
 
-    private List<Vaga> gerarVagas(String setor, int quantidade){
-
-        List<Vaga> vagasGeradas = new ArrayList<>();
-
-        for (int i = 1; i <= quantidade; i++ ){
-            Vaga vaga = new Vaga();
-
-            vaga.setIdentificador(String.format("%s%02d", setor, i));
-
-            vaga.setStatus(StatusVaga.DISPONIVEL);
-
-            vagasGeradas.add(vaga);
+        if (estacionamento == null) {
+            throw new IllegalArgumentException("Estacionamento inválido");
         }
 
-        return vagasGeradas;
+        if (estacionamento.getEndereco() == null ||
+            estacionamento.getEndereco().isBlank()) {
+            throw new IllegalArgumentException("Endereço inválido");
+        }
+
+        if (repository.procurarPorEndereco(estacionamento.getEndereco()) != null) {
+            throw new IllegalArgumentException(
+                "Não foi possível salvar. Endereço já cadastrado"
+            );
+        }
     }
 
-    public void salvar(Estacionamento estacionamento){
-        
-        if (repository.procurarPorEndereco(estacionamento.getEndereco()) != null){
-            throw new IllegalArgumentException("Não foi possível salvar. Endereço já cadastrado");
-        }
-
-        for (Piso piso : estacionamento.getPisos()) {
-            for (Setor setor : piso.getSetores()){
-
-                List<Vaga> vagasGeradas = gerarVagas(
-                    setor.getIdentificador(),
-                    setor.getQuantidadeVaga()
-                );
-                for (Vaga vaga : vagasGeradas) {
-                    vagaRepository.adicionarVaga(vaga);
-                }
-                System.out.println("Vagas geradas para o setor: " + setor.getIdentificador());
-
-                for (Vaga vaga : vagasGeradas) {
-                    System.out.println(
-                        vaga.getIdentificador() + " - " + vaga.getStatus()
-                    );
-                }
-                setor.setVagas(vagasGeradas);
-            }
-        }
-
+    public void salvar(Estacionamento estacionamento) {
         repository.salvar(estacionamento);
     }
 }

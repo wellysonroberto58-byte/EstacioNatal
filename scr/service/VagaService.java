@@ -1,7 +1,9 @@
 package service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import model.Setor;
 import model.StatusVaga;
 import model.Vaga;
 import repository.IVaga;
@@ -11,6 +13,44 @@ public class VagaService {
     // definindo o atributo do tipo
     // necessário pois o VagaService precisa separar uma referência para se comunicar
     private IVaga repository; 
+
+
+
+    public List<Vaga> gerarVagasParaSetor(Setor setor) {
+
+        if (setor == null) {
+            throw new IllegalArgumentException("Setor inválido");
+        }
+
+        if (setor.getIdentificador() == null ||
+            setor.getIdentificador().isBlank()) {
+            throw new IllegalArgumentException("Identificador do setor inválido");
+        }
+
+        if (setor.getQuantidadeVaga() <= 0) {
+            throw new IllegalArgumentException("Quantidade de vagas inválida");
+        }
+
+        List<Vaga> vagasGeradas = new ArrayList<>();
+
+
+        for (int i = 1; i <= setor.getQuantidadeVaga(); i++) {
+
+            Vaga vaga = new Vaga();
+
+            vaga.setIdentificador(
+                String.format("%s%02d", setor.getIdentificador(), i)
+            );
+
+            vaga.setStatus(StatusVaga.DISPONIVEL);
+
+            repository.adicionarVaga(vaga);
+
+            vagasGeradas.add(vaga);
+        }
+
+        return vagasGeradas;
+    }
 
 
     // Construtor para quando instanciarmos o vagaService passando a interface como parâmetro
@@ -93,7 +133,7 @@ public class VagaService {
             throw new IllegalArgumentException("Vaga não encontrada");
         }
 
-        if (vaga.getIdentificador() == null || vagaAlvo.getIdentificador().isBlank()){
+        if (vaga.getIdentificador() == null || vaga.getIdentificador().isBlank()){
             throw new IllegalArgumentException("O identificador não pode ser vazio");
         }
         if (vaga.getStatus() == null){
