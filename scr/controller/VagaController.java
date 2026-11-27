@@ -153,6 +153,28 @@ public class VagaController {
                     gson.toJson("Status atualizado com sucesso!")
                 );
             }
+
+            else if (metodo.equals("PUT")) {
+
+                String prefixo = "/estacioNatal/vagas/";
+
+                String idTexto = caminho.substring(prefixo.length());
+
+                int id = Integer.parseInt(idTexto);
+
+                String conteudo = lerCorpo(exchange);
+
+                Vaga vagaEditada = gson.fromJson(conteudo, Vaga.class);
+
+                editarVaga(id, vagaEditada);
+
+                enviarResposta(
+                    exchange,
+                    200,
+                    gson.toJson("Vaga atualizada com sucesso!")
+                );
+            }
+
         });
     }
 

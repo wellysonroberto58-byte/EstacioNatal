@@ -46,7 +46,6 @@ public class IVagaMemory implements IVaga{
         Vaga vagaAlvo = buscarPorId(id);
 
         if (vagaAlvo != null){
-            vagaAlvo.setId(vaga.getId());
             vagaAlvo.setIdentificador(vaga.getIdentificador());
             vagaAlvo.setStatus(vaga.getStatus());
             vagaAlvo.setTipo(vaga.getTipo());
