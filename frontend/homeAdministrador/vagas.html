@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa de vagas | Estácio Natal</title>
+  <link rel="stylesheet" href="style/gerencia.css" />
+  <link rel="stylesheet" href="style/vagas.css" />
+</head>
+
+<body>
+  <div class="admin-app">
+    <header class="topbar">
+      <a class="brand" href="gerencia.html" aria-label="Estácio Natal — visão geral">
+        <img class="brand-mark" src="../assets/Logo.svg" alt="" aria-hidden="true" />
+        <span>Estácio<span class="brand-accent">Natal</span></span>
+      </a>
+      <div class="topbar-title">
+        <p class="topbar-eyebrow">PAINEL ADMINISTRATIVO</p>
+        <h1>Mapa de vagas</h1>
+      </div>
+      <button class="profile-button" type="button" aria-label="Perfil do administrador">
+        <span class="profile-avatar" aria-hidden="true">AD</span>
+        <span class="profile-copy">
+          <strong>Administrador</strong>
+          <span>Gestor do estacionamento</span>
+        </span>
+        <svg class="profile-chevron" aria-hidden="true" viewBox="0 0 20 20">
+          <path d="m5 7.5 5 5 5-5" />
+        </svg>
+      </button>
+    </header>
+
+    <aside class="sidebar">
+      <div class="sidebar-heading">
+        <span class="sidebar-heading-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 20V8l8-5 8 5v12" />
+            <path d="M9 20v-6h6v6M8 9h.01M16 9h.01" />
+          </svg>
+        </span>
+        <span>
+          <strong>Área administrativa</strong>
+          <small>Estacionamento</small>
+        </span>
+      </div>
+      <p class="sidebar-label">MENU PRINCIPAL</p>
+      <nav class="side-nav" aria-label="Menu de gerenciamento">
+        <a class="nav-button" href="gerencia.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="8" height="8" rx="1.5" />
+            <rect x="13" y="3" width="8" height="5" rx="1.5" />
+            <rect x="13" y="10" width="8" height="11" rx="1.5" />
+            <rect x="3" y="13" width="8" height="8" rx="1.5" />
+          </svg>
+          <span>Visão geral</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+        <a class="nav-button" href="estrutura.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-4h4v4" />
+          </svg>
+          <span>Configurar estrutura</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+        <a class="nav-button" href="vagas.html" aria-current="page">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M5 21V3h14v18M8 7h8M8 11h8M8 15h5" />
+            <path d="m15 16 2 2 4-4" />
+          </svg>
+          <span>Mapa de vagas</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+        <a class="nav-button" href="ListaVagas.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M8 6h13M8 12h13M8 18h13" />
+            <path d="M3 6h.01M3 12h.01M3 18h.01" />
+          </svg>
+          <span>Lista de Vagas</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+        <a class="nav-button" href="cameras.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M14 10 20 7v10l-6-3M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+            <circle cx="8" cy="12" r="2" />
+          </svg>
+          <span>Câmeras</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+        <a class="nav-button" href="historico.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8" />
+            <path d="M3 3v5h5m4-1v5l3 2" />
+          </svg>
+          <span>Histórico</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+        <a class="nav-button" href="usuarios.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="9" cy="8" r="3" />
+            <path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.2a3 3 0 0 1 0 5.6m2 3.2a5 5 0 0 1 3 4.6V20" />
+          </svg>
+          <span>Gerenciamento de usuários</span>
+          <span class="nav-indicator" aria-hidden="true"></span>
+        </a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-status">
+          <span class="status-pulse" aria-hidden="true"></span>
+          <span>
+            <strong>Painel pronto</strong>
+            <small>Ambiente demonstrativo</small>
+          </span>
+        </div>
+        <a class="back-link" href="../homeMotorista/motorista.html">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M15 18 9 12l6-6M9 12h12" />
+          </svg>
+          <span>Voltar à tela do motorista</span>
+        </a>
+      </div>
+    </aside>
+
+
+    <main class="main-content">
+
+      <section class="map-header">
+        <div>
+          <h2>Mapa do estacionamento</h2>
+          <p>Selecione uma vaga para visualizar ou alterar suas informações.</p>
+        </div>
+
+        <button type="button" id="btn-recarregar">
+          Atualizar mapa
+        </button>
+      </section>
+
+      <section class="parking-summary">
+        <div class="summary-card">
+          <span>Total de vagas</span>
+          <strong id="total-vagas">0</strong>
+        </div>
+
+        <div class="summary-card">
+          <span>Disponíveis</span>
+          <strong id="total-disponiveis">0</strong>
+        </div>
+
+        <div class="summary-card">
+          <span>Ocupadas</span>
+          <strong id="total-ocupadas">0</strong>
+        </div>
+
+        <div class="summary-card">
+          <span>Manutenção</span>
+          <strong id="total-manutencao">0</strong>
+        </div>
+      </section>
+
+      <section class="parking-layout">
+
+        <!-- MAPA -->
+        <div class="parking-map-panel">
+
+          <div class="panel-heading">
+            <div>
+              <h3>Vagas do estacionamento</h3>
+              <p>Selecione uma vaga para editar.</p>
+            </div>
+          </div>
+
+          <div class="parking-legend">
+            <span>🟢 Disponível</span>
+            <span>🔴 Ocupada</span>
+            <span>🟡 Manutenção</span>
+            <span>♿ Acessível</span>
+          </div>
+
+          <div id="parking-grid" class="parking-grid">
+            <p>Carregando vagas...</p>
+          </div>
+
+        </div>
+
+        <!-- EDIÇÃO DA VAGA -->
+        <aside class="spot-editor">
+
+          <h3>Editar vaga</h3>
+
+          <p id="selected-title">
+            Selecione uma vaga no mapa.
+          </p>
+
+          <div id="spot-actions" hidden>
+
+            <div class="editor-field">
+              <label for="spot-status">Status da vaga</label>
+
+              <select id="spot-status">
+                <option value="DISPONIVEL">Disponível</option>
+                <option value="OCUPADO">Ocupada</option>
+                <option value="MANUTENCAO">Manutenção</option>
+              </select>
+            </div>
+
+            <div class="editor-field">
+              <label for="spot-type">Tipo da vaga</label>
+
+              <select id="spot-type">
+                <option value="NAO_ACESSIVEL">Não acessível</option>
+                <option value="ACESSIVEL">Acessível</option>
+              </select>
+            </div>
+
+            <button type="button" id="btn-salvar-vaga">
+              Salvar alterações
+            </button>
+
+          </div>
+
+          <p id="mensagem-vaga"></p>
+
+        </aside>
+
+      </section>
+
+    </main>
+
+  </div>
+  <script src="./script/vagas.js"></script>
+</body>
+
+</html>

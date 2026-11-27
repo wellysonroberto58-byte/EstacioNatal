@@ -1,0 +1,277 @@
+:root {
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #fafaf9;
+  background: #14100f;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  font-weight: 400;
+
+  --page-background: #14100f;
+  --card-background: #201f1d;
+  --input-background: #2e2d2b;
+  --red: #ff3838;
+  --red-text: #ff6b6b;
+  --red-hover: #ff5c5c;
+  --text-primary: #fafaf9;
+  --text-secondary: #a8a29e;
+  --border: #57534e;
+  --error: #ffa94d;
+  --success: #4ade80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(
+      ellipse at 12% 10%,
+      rgba(255, 56, 56, 0.09),
+      transparent 34%
+    ),
+    var(--page-background);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 40px 10px;
+}
+
+.signup-card {
+  width: min(100%, 520px);
+  padding: 38px 44px 30px;
+  border: 1px solid rgba(87, 83, 78, 0.45);
+  border-radius: 18px;
+  background: var(--card-background);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: -0.3px;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: block;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.brand-accent {
+  color: var(--red-text);
+}
+
+.form-header {
+  margin: 32px 0 26px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--red-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: clamp(26px, 5vw, 32px);
+  letter-spacing: -1px;
+}
+
+.form-header > p:last-child {
+  margin: 9px 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.signup-form {
+  display: grid;
+  gap: 17px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field label {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.mensagem-sucesso {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+
+  background-color: #dcfce7;
+  color: #166534;
+
+  padding: 15px 20px;
+  border-radius: 8px;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.field-agrupada {
+  display: flex;
+  gap: 50px;
+}
+
+.field input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--input-background);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.field input::placeholder {
+  color: var(--text-secondary);
+}
+
+.field input:focus {
+  border-width: 2px;
+  box-shadow: 0 0 0 3px rgba(255, 56, 56, 0.25);
+  border-color: var(--red);
+}
+
+.field input:user-invalid {
+  border-color: var(--error);
+}
+
+.field input:user-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(255, 56, 56, 0.25);
+}
+
+.field small {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 5px;
+}
+
+.form-message {
+  margin: 0;
+  color: var(--error);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.form-message::before {
+  content: "⚠";
+  margin-right: 7px;
+}
+
+.form-message[hidden]::before {
+  content: none;
+}
+
+.form-message[data-state="success"] {
+  color: var(--success);
+}
+
+.form-message[data-state="success"]::before {
+  content: "✓";
+}
+
+.button {
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 650;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button-secondary {
+  border-color: var(--border);
+  background: var(--card-background);
+  color: var(--text-primary);
+}
+
+.button-secondary:hover {
+  border-color: #78716c;
+  background: var(--input-background);
+}
+
+.button-primary {
+  flex: 1;
+  background: var(--red);
+  color: var(--page-background);
+}
+
+.button-primary:hover {
+  background: var(--red-hover);
+}
+
+.button:focus-visible {
+  outline: 3px solid rgba(255, 56, 56, 0.45);
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .page {
+    padding: 18px 14px;
+  }
+
+  .signup-card {
+    padding: 28px 22px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

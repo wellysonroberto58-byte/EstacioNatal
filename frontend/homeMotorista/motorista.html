@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Encontre e selecione uma vaga no estacionamento Estácio Natal."
+    />
+    <title>Estacionamento | Estácio Natal</title>
+    <link rel="stylesheet" href="style/motorista.css" />
+    <script src="script/motorista.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a
+        class="brand"
+        href="../cadastro/cadastro.html"
+        aria-label="Estácio Natal"
+      >
+        <img class="brand-mark" src="../assets/Logo.svg" alt="" aria-hidden="true" />
+        <span>Estácio<span class="brand-accent">Natal</span></span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegação principal">
+        <a class="nav-link nav-link-active" href="#estacionamento"
+          >Estacionamento</a
+        >
+        <a class="nav-link" href="#como-funciona">Como funciona</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <span class="location">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+            <circle cx="12" cy="10" r="2.5" />
+          </svg>
+          <span id="parking-location">Local não informado</span>
+        </span>
+        <a
+          class="profile-button"
+          href="../login/login.html"
+          aria-label="Entrar na sua conta"
+        >
+          <span class="profile-avatar" aria-hidden="true">M</span>
+          <span>Entrar</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="dashboard" id="estacionamento">
+      <section class="welcome-row" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">ESTACIONAMENTO ESTÁCIO NATAL</p>
+          <h1 id="page-title">Encontre sua vaga<span>.</span></h1>
+          <p class="page-description">
+            Escolha onde estacionar e chegue com tranquilidade.
+          </p>
+        </div>
+      </section>
+
+      <!-- A busca considera o estacionamento e a estrutura carregada pela API. -->
+      <section class="search-panel" aria-label="Buscar estacionamento">
+        <label class="search-field">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="10.8" cy="10.8" r="6.8" />
+            <path d="m16 16 5 5" />
+          </svg>
+          <input
+            id="parking-search"
+            type="search"
+            placeholder="Busque por nome, endereço, piso ou setor"
+            autocomplete="off"
+            aria-label="Buscar estacionamento por nome, endereço, piso ou setor"
+            list="parking-options"
+          />
+          <datalist id="parking-options"></datalist>
+          <kbd>Ctrl K</kbd>
+        </label>
+        <div class="search-note" role="status" aria-live="polite">
+          <span class="search-note-icon" aria-hidden="true">i</span>
+          <span id="parking-search-message"
+            >Busque pelo nome, endereço, piso ou setor.</span
+          >
+        </div>
+      </section>
+
+      <div class="content-grid" id="parking-content">
+        <!-- O mapa exibe somente vagas; o motorista não altera sua configuração. -->
+        <section class="map-card" aria-labelledby="map-title">
+          <div class="map-card-header">
+            <div>
+              <p class="section-kicker">MAPA DO ESTACIONAMENTO</p>
+              <h2 id="map-title">Escolha sua vaga</h2>
+            </div>
+            <label class="floor-select">
+              <span>Piso</span>
+              <select id="floor-select" aria-label="Selecionar piso" disabled>
+                <option value="">Aguardando dados...</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="map-controls">
+            <div class="sector-picker" aria-label="Selecionar setor">
+              <span class="control-label">Setor</span>
+              <div class="sector-options" id="sector-options"></div>
+            </div>
+            <button
+              class="accessibility-toggle"
+              id="accessibility-toggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Exibir somente vagas acessíveis"
+            >
+              <span class="accessibility-icon" aria-hidden="true"
+                ><svg viewBox="0 0 24 24">
+                  <circle cx="9" cy="4" r="2" />
+                  <path
+                    d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4"
+                  /></svg
+              ></span>
+              <span>Acessíveis</span>
+              <span class="toggle-track" aria-hidden="true"><span></span></span>
+            </button>
+          </div>
+
+          <div class="map-legend" aria-label="Legenda">
+            <span><i class="legend-dot legend-available"></i>Disponível</span>
+            <span><i class="legend-dot legend-occupied"></i>Ocupada</span>
+            <span><i class="legend-dot legend-maintenance"></i>Manutenção</span>
+            <span
+              ><i class="legend-accessible" aria-hidden="true"
+                ><svg viewBox="0 0 24 24">
+                  <circle cx="9" cy="4" r="2" />
+                  <path
+                    d="m9 7-1 6 5 1 2 5m-6-6 5-4 4 1m-7 4a5 5 0 1 0 5 4"
+                  /></svg></i
+              >Acessível</span
+            >
+          </div>
+
+          <div class="parking-map" aria-label="Mapa de vagas">
+            <div class="parking-row" id="parking-row-top"></div>
+            <div class="parking-row parking-row-bottom" id="parking-row-bottom"></div>
+          </div>
+
+          <p
+            class="map-feedback"
+            id="map-feedback"
+            role="status"
+            aria-live="polite"
+          >
+            Carregando as vagas do estacionamento...
+          </p>
+        </section>
+
+        <aside class="details-column">
+          <section
+            class="availability-card"
+            aria-labelledby="availability-title"
+          >
+            <div class="availability-heading">
+              <span class="availability-icon" aria-hidden="true">P</span>
+              <span class="availability-label">DISPONIBILIDADE NO SETOR</span>
+            </div>
+            <h2 id="availability-title">
+              Seu lugar está<br />esperando por você.
+            </h2>
+            <p>
+              Encontre uma vaga livre e aproveite melhor o seu tempo no campus.
+            </p>
+            <div class="availability-count">
+              <strong id="available-count">0</strong>
+              <span>vagas disponíveis<br />neste setor</span>
+            </div>
+            <div class="availability-meter" aria-hidden="true">
+              <span id="occupancy-meter"></span>
+            </div>
+            <p class="meter-caption">
+              Ocupação do setor <strong id="occupancy-percent">0%</strong>
+            </p>
+          </section>
+
+          <section class="help-card" id="como-funciona">
+            <span class="help-icon" aria-hidden="true">?</span>
+            <p>
+              <strong>Precisa de ajuda?</strong><br />As vagas acessíveis estão
+              sinalizadas no mapa.
+            </p>
+          </section>
+        </aside>
+      </div>
+
+      <footer class="page-footer">
+        <span
+          >Estácio Natal <span aria-hidden="true">·</span> Mobilidade no
+          campus</span
+        >
+        <span>Precisa de suporte? Consulte a equipe do campus.</span>
+      </footer>
+    </main>
+  </body>
+</html>
