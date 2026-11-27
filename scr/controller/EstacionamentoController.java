@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
@@ -12,7 +11,6 @@ import com.sun.net.httpserver.HttpServer;
 
 import facade.EstacionamentoFacade;
 import model.Estacionamento;
-import service.EstacionamentoService;
 
 public class EstacionamentoController {
 

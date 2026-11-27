@@ -74,8 +74,6 @@ public class MotoristaController {
         servidor.createContext("/estacioNatal/motoristas", exchange -> {
             String metodo = exchange.getRequestMethod();
 
-            String caminho = exchange.getRequestURI().getPath();
-
             configurarCors(exchange, metodo);
 
             if (metodo.equals("GET")){

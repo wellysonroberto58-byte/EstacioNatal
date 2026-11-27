@@ -1,7 +1,5 @@
 package repository;
 
-import java.util.List;
-
 import model.Estacionamento;
 
 public interface IEstacionamento {

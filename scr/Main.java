@@ -3,7 +3,6 @@ import controller.EstacionamentoController;
 import controller.MotoristaController;
 import controller.VagaController;
 import facade.EstacionamentoFacade;
-import model.Administrador;
 import observer.PainelVagasObserver;
 import repository.EstacionamentoMemory;
 import repository.IAdministrador;
@@ -18,7 +17,6 @@ import service.AdministradorService;
 import service.EstacionamentoService;
 import service.MotoristaService;
 import service.VagaService;
-import observer.PainelVagasObserver;
 
 
 public class Main {

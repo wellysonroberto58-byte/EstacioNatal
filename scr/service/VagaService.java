@@ -5,6 +5,9 @@ import java.util.List;
 
 import observer.ObservadorVaga;
 import observer.GerenciadorObservadores;
+
+import strategy.EstrategiaBuscaVaga;
+
 import model.Setor;
 import model.StatusVaga;
 import model.Vaga;
@@ -165,6 +168,13 @@ public class VagaService {
 
     public void adicionarObservador(ObservadorVaga observador) {
         gerenciadorObservadores.adicionarObservador(observador);
+    }
+
+    public List<Vaga> buscarVagas(EstrategiaBuscaVaga estrategia) {
+
+        List<Vaga> vagas = repository.listarVagas();
+
+        return estrategia.buscar(vagas);
     }
     
 
