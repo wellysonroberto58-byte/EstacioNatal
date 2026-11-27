@@ -55,6 +55,12 @@ public class VagaController {
 
             String caminho = exchange.getRequestURI().getPath();
 
+                System.out.println("==========================");
+                System.out.println("REQUISIÇÃO RECEBIDA!");
+                System.out.println("Método: " + metodo);
+                System.out.println("Caminho: " + caminho);
+                System.out.println("==========================");
+
             configurarCors(exchange, metodo);
 
             if (metodo.equals("GET")){
@@ -76,51 +82,29 @@ public class VagaController {
                 
             }
 
-             else if (metodo.equals("PUT") && caminho.endsWith("/status")) {
-                
-                String[] partes = caminho.split("/");
-                
-                int id = Integer.parseInt(partes[3]);
-                
+            else if (metodo.equals("PUT") && caminho.endsWith("/status")) {
+
+                String prefixo = "/estacioNatal/vagas/";
+                String sufixo = "/status";
+
+                String idTexto = caminho.substring(
+                    prefixo.length(),
+                    caminho.length() - sufixo.length()
+                );
+
+                int id = Integer.parseInt(idTexto);
+
                 String conteudo = lerCorpo(exchange);
-                
+
                 StatusVaga status = gson.fromJson(conteudo, StatusVaga.class);
-                
+
                 atualizarStatus(id, status);
-                
-                enviarResposta(exchange, 200,
-                    gson.toJson("Status atualizado com sucesso!"));
-            }
-                
-            else if(metodo.equals("PUT")){
-    
-                String[] partes = caminho.split("/");
 
-                int id = Integer.parseInt(partes[3]);
-
-                String conteudo = lerCorpo(exchange);
-
-                Vaga vagaEditada = gson.fromJson(conteudo, Vaga.class);
-
-                editarVaga(id, vagaEditada);
-
-                enviarResposta(exchange, 200, "Vaga atualizada com sucesso!");
-    
-    
-            } 
-            else if(metodo.equals("DELETE")){
-                
-                String[] partes = caminho.split("/");
-
-                int id = Integer.parseInt(partes[3]);
-
-                excluirVaga(id);
-
-                enviarResposta(exchange, 200, "Vaga excluida com sucesso!");
-
-            }
-            else {
-                enviarResposta(exchange, 405, "Método HTTP não permitido.");
+                enviarResposta(
+                    exchange,
+                    200,
+                    gson.toJson("Status atualizado com sucesso!")
+                );
             }
         });
     }

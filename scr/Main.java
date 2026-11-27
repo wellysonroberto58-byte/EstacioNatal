@@ -4,6 +4,7 @@ import controller.MotoristaController;
 import controller.VagaController;
 import facade.EstacionamentoFacade;
 import model.Administrador;
+import observer.PainelVagasObserver;
 import repository.EstacionamentoMemory;
 import repository.IAdministrador;
 import repository.IAdministradorMemory;
@@ -17,6 +18,7 @@ import service.AdministradorService;
 import service.EstacionamentoService;
 import service.MotoristaService;
 import service.VagaService;
+import observer.PainelVagasObserver;
 
 
 public class Main {
@@ -27,6 +29,10 @@ public class Main {
         //VAGAS
         IVaga repoVaga = new IVagaMemory();
         VagaService vagaService = new VagaService(repoVaga);
+
+        PainelVagasObserver painelObserver = new PainelVagasObserver();
+        vagaService.adicionarObservador(painelObserver);
+
         VagaController vagaController = new VagaController(vagaService);
         
         //MOTORISTAS

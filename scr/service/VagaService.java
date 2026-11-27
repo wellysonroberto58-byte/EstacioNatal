@@ -3,6 +3,8 @@ package service;
 import java.util.ArrayList;
 import java.util.List;
 
+import observer.ObservadorVaga;
+import observer.GerenciadorObservadores;
 import model.Setor;
 import model.StatusVaga;
 import model.Vaga;
@@ -12,7 +14,9 @@ public class VagaService {
 
     // definindo o atributo do tipo
     // necessário pois o VagaService precisa separar uma referência para se comunicar
-    private IVaga repository; 
+    private IVaga repository;
+    
+    private GerenciadorObservadores gerenciadorObservadores = new GerenciadorObservadores();
 
 
 
@@ -74,24 +78,33 @@ public class VagaService {
         repository.excluirVaga(id); // caso a vaga existe, ele exclui normal
     }
 
+    
     public void atualizarStatus(int id, StatusVaga novoStatus) {
 
-        // Verifica se o status recebido é válido
         if (novoStatus == null) {
             throw new IllegalArgumentException("Status inválido");
         }
 
-        // Procura a vaga pelo ID
         Vaga vagaAlvo = repository.buscarPorId(id);
 
-        // Verifica se a vaga existe
         if (vagaAlvo == null) {
             throw new IllegalArgumentException("Vaga não encontrada");
         }
 
-        // Atualiza o status da vaga
+        // Guarda o status anterior
+        StatusVaga statusAnterior = vagaAlvo.getStatus();
+
+        // Atualiza o status
         vagaAlvo.setStatus(novoStatus);
+
+        // Notifica os observadores
+        gerenciadorObservadores.notificar(
+            vagaAlvo,
+            statusAnterior,
+            novoStatus
+        );
     }
+
 
     public void cadastrarVaga(Vaga vaga){
 
@@ -148,6 +161,10 @@ public class VagaService {
 
     public List<Vaga> listarVagas() {
         return repository.listarVagas();
+    }
+
+    public void adicionarObservador(ObservadorVaga observador) {
+        gerenciadorObservadores.adicionarObservador(observador);
     }
     
 
