@@ -48,7 +48,7 @@ formularioLogin.addEventListener("submit", async (evento) => {
 
   const dadosLogin = {
     email: document.querySelector("#identifier").value.trim(),
-    senhaHash: document.querySelector("#password").value,
+    senha: document.querySelector("#password").value,
   };
 
   try {
@@ -71,6 +71,7 @@ formularioLogin.addEventListener("submit", async (evento) => {
     const retorno = await resposta.text();
     console.log("Acesso realizado:", retorno);
     mostrarMensagemLogin("Acesso realizado com sucesso.", "success");
+    window.location.href = "../homeMotorista/motorista.html";
   } catch (erro) {
     console.error("Erro ao realizar acesso:", erro);
     const mensagem =
